@@ -1,7 +1,7 @@
 -- ============================================================================
--- MODUL 01: FONDASI FILTERING, DATA HYGIENE, & EKSPLORASI AWAL
--- Database: retail_fmcg_db
--- RDBMS: 	 PostgreSQL 16
+-- MODUL 01 : FONDASI FILTERING, DATA HYGIENE, & EKSPLORASI AWAL
+-- Database : retail_fmcg_db
+-- RDBMS    : PostgreSQL 16
 -- ============================================================================
 
 SELECT * FROM dim_pelanggan;
