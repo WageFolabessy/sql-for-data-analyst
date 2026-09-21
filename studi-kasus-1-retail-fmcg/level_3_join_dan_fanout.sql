@@ -79,3 +79,72 @@ HAVING
     ) 
     - SUM((fpd.harga_jual_aktual - dp.harga_beli_hpp) * fpd.kuantitas 
         - COALESCE(fpd.diskon_nominal, 0)) <> 0;
+
+-- ============================================================================
+-- TANTANGAN 3.2: THE FAN-OUT TRAP AUDIT (UJI PELIPATAN BARIS)
+-- ============================================================================
+-- 1. Masalah Bisnis  : Membuktikan secara empiris bahaya penggabungan tabel
+--                     Header (1) ke Detail (*) tanpa pra-agregasi.
+-- 2. Target Grain    : 1 baris = Audit Nilai Pra-Join vs Pasca-Join
+-- 3. Temuan Audit    :
+--    - Nilai Pra-Join  : 3.460 baris struk | Omzet: Rp 641.951.500,00
+--    - Nilai Pasca-Join: 8.931 baris item  | Omzet: Rp 2.059.376.700,00
+--    - Kesimpulan      : Omzet membengkak 3,21x lipat akibat nilai nota yang sama
+--                        dijumlahkan berulang kali sebanyak item keranjang belanja.
+-- ============================================================================
+
+-- Langkah 1: Hitung baseline valid langsung dari tabel Header
+SELECT 
+    COUNT(*) AS total_baris_pra_join,
+    SUM(total_nilai_transaksi) AS total_omzet_pra_join
+FROM fact_penjualan_header
+WHERE status_transaksi IN ('PAID', 'COMPLETED');
+
+-- Langkah 2: Buktikan terjadinya pelipatan baris dan nilai setelah di-JOIN ke Detail
+SELECT 
+    COUNT(*) AS total_baris_pasca_join,
+    SUM(fph.total_nilai_transaksi) AS total_omzet_pasca_join
+FROM fact_penjualan_header fph
+INNER JOIN fact_penjualan_detail fpd 
+    ON fph.transaksi_id = fpd.transaksi_id
+WHERE fph.status_transaksi IN ('PAID', 'COMPLETED');
+
+
+-- ============================================================================
+-- TANTANGAN 3.3: DETEKSI BARANG SILUMAN (ANTI-JOIN ORPHANED RECORDS)
+-- ============================================================================
+-- 1. Masalah Bisnis  : Mengidentifikasi transaksi kasir yang memuat kode produk
+--                     yang tidak terdaftar di master katalog dim_produk.
+-- 2. Target Grain    : 1 baris = 1 Item Transaksi Siluman (detail_id)
+-- 3. Audit Sumber    : fact_penjualan_detail dan dim_produk.
+-- 4. Logika Anti-Join:
+--    - Gunakan LEFT JOIN dari tabel transaksi (fpd) ke tabel master (dp).
+--    - Pasang filter WHERE dp.produk_id IS NULL untuk menangkap transaksi
+--      yang kuncinya tidak memiliki pasangan di tabel dimensi.
+-- ============================================================================
+
+SELECT
+    fpd.detail_id,
+    fpd.transaksi_id,
+    fpd.produk_id,
+    fpd.kuantitas,
+    fpd.subtotal
+FROM fact_penjualan_detail fpd
+LEFT JOIN dim_produk dp
+    ON fpd.produk_id = dp.produk_id
+WHERE dp.produk_id IS NULL
+ORDER BY fpd.detail_id ASC;
+
+-- ----------------------------------------------------------------------------
+-- SANITY CHECK 3.3: Audit Nilai Transaksi Produk Tidak Terpetakan
+-- Metode: Menghitung volume baris, sebaran nota, dan total nilai transaksi anomali.
+-- Pembuktian: Memberikan angka riil total eksposur data unmapped ke tim operasional.
+-- ----------------------------------------------------------------------------
+SELECT 
+    COUNT(*)                         AS total_baris_anomali,
+    COUNT(DISTINCT fpd.transaksi_id) AS total_struk_terdampak,
+    SUM(fpd.subtotal)                AS total_nilai_unmapped
+FROM fact_penjualan_detail fpd
+LEFT JOIN dim_produk dp 
+    ON fpd.produk_id = dp.produk_id
+WHERE dp.produk_id IS NULL;
