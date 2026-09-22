@@ -213,8 +213,8 @@ Kerjakan tantangan berikut secara berurutan. Setiap query wajib mematuhi **Clean
 * **Konstruksi Query Menggunakan Modular CTE (WITH):**
   * **CTE 1 (`store_category_margin`):** Hitung omzet bersih, total laba kotor, dan `% Margin` per `(toko_id, nama_toko, kategori_bersih)`.
   * **CTE 2 (`national_category_margin`):** Hitung rata-rata `% Margin Nasional` per `kategori_bersih`.
-  * **Final Query:** Gabungkan CTE 1 dan CTE 2, lalu tampilkan toko dan kategori yang memiliki `% Margin Toko < % Margin Nasional - 5%` (selisih lebih dari 5 poin persentase).
-* **Sanity Check:** Pastikan pembagian persentase dikalikan `100.0` untuk mencegah *integer division truncation* di SQL.
+  * **Final Query:** Gabungkan CTE 1 dan CTE 2, lalu tampilkan toko dan kategori yang memiliki `% Margin Toko < % Margin Nasional - 2%` (selisih lebih dari 2 poin persentase di bawah rata-rata nasional).
+* **Sanity Check:** Pastikan pembagian persentase dikalikan `100.0` untuk mencegah *integer division truncation* di SQL. Terdapat tepat 3 gerai dengan kebocoran margin minuman di atas 2 poin persentase.
 
 #### Tantangan 4.2: Rekonsiliasi Zero-Discrepancy (Header vs Detail Audit)
 * **Masalah Bisnis (The Objective):** Lakukan rekonsiliasi keuangan antara nilai total yang tercatat di tabel struk (`fact_penjualan_header.total_nilai_transaksi`) dengan penjumlahan subtotal di tabel keranjang (`fact_penjualan_detail.subtotal`). Identifikasi transaksi yang memiliki selisih (*discrepancy*).
