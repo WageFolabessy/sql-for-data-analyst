@@ -32,9 +32,15 @@ Direksi membutuhkan Anda untuk melakukan **audit investigasi menyeluruh berbasis
 
 ---
 
-### 2. ELEVEN STRATEGIC QUESTIONS (11 MASALAH BISNIS YANG WAJIB DIJAWAB)
+### 2. THIRTEEN STRATEGIC QUESTIONS (13 MASALAH BISNIS & DATA INTEGRITY)
 
-Kami menginstruksikan tim Anda untuk memecahkan 11 pertanyaan strategis di bawah ini dan menyajikan angka-angka faktual hasil audit:
+Kami menginstruksikan tim Anda untuk memecahkan 13 pertanyaan investigasi di bawah ini dan menyajikan angka-angka faktual hasil audit:
+
+#### 🧹 TEMA 0: DATA HYGIENE & EVENT STREAM CLEANSING (PRE-ANALYTICS GATEWAY)
+* **Kasus 0.1 (Audit & Pembersihan Jitter Duplicate Barcode Scans):**  
+  Perangkat PDA kurir di lapangan dan mesin *scanner conveyor* di hub sering mengalami *network retry* dan *sensor jitter*, menghasilkan pemindaian ganda berurutan pada resi dan status yang sama dalam selisih beberapa detik ($\le 10\text{ detik}$). Temukan total peristiwa pemindaian duplikat ini dan bangun logika deduplikasi data agar tidak merusak perhitungan durasi transit!
+* **Kasus 0.2 (Deteksi Paket Nyasar / Unmanifested Ghost Parcels):**  
+  Di lantai sortir hub transit, temukan nomor resi yang tercatat melakukan pemindaian barcode namun **tidak pernah terdaftar** di sistem order pengiriman resmi (`fact_pengiriman`). Identifikasi di hub transit mana saja paket-paket tanpa surat jalan ini tersangkut agar tim *Loss Prevention* dapat mengamankannya!
 
 #### 📦 TEMA 1: SLA COMPLIANCE & ON-TIME DELIVERY (MACRO PERFORMANCE)
 * **Kasus 1.1 (Audit Kepatuhan OTD Makro):**  

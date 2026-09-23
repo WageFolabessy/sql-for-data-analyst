@@ -14,6 +14,59 @@
 
 
 -- ==============================================================================
+-- TEMA 0: DATA HYGIENE & PIPELINE INTEGRITY (PRE-ANALYTICS GATEWAY)
+-- ==============================================================================
+
+-- ------------------------------------------------------------------------------
+-- KASUS 0.1: Audit & Pembersihan Jitter Duplicate Barcode Scans
+-- ------------------------------------------------------------------------------
+-- Masalah Bisnis & Pipeline:
+-- Sensor conveyor di hub dan PDA kurir di lapangan kerap mengalami network retry
+-- sehingga memindai resi yang sama dengan status yang sama dalam selisih <= 10 detik.
+-- Jika tidak dibersihkan, kueri LEAD() di Tema 2 akan memasangkan HUB_IN dengan duplikat
+-- HUB_IN kedua, sehingga dwell time terhitung 0 jam (rusak total!).
+--
+-- Tugas Anda:
+-- 1. Hitung berapa banyak scan duplikat jitter yang ada di fact_tracking_event per event_code!
+-- 2. Tunjukkan logika deduplikasi (mengambil hanya pemindaian pertama per kelompok jitter).
+--
+-- Referensi SOP:
+-- 02_SOP_DAN_KAMUS_METRIK_LOGISTIK.md (Bagian 6.1)
+--
+-- Kolom yang diharapkan (minimal):
+-- event_code | total_scan_kotor | total_jitter_duplicate | total_scan_bersih | pct_jitter_duplikasi
+-- ------------------------------------------------------------------------------
+
+-- TULIS KUERI ANDA DI SINI:
+
+
+
+
+-- ------------------------------------------------------------------------------
+-- KASUS 0.2: Deteksi Paket Nyasar / Unmanifested Ghost Parcels
+-- ------------------------------------------------------------------------------
+-- Masalah Bisnis & Operasional:
+-- Di hub sortir transit antarpulau, kerap ditemukan paket mitra lain atau paket salah
+-- kirim yang ter-scan di conveyor tapi nomor resinya tidak terdaftar di fact_pengiriman.
+--
+-- Tugas Anda:
+-- Temukan seluruh nomor resi hantu (unmanifested) yang ter-scan di hub transit beserta
+-- di fasilitas hub mana saja paket tersebut sempat terpindai, untuk dilaporkan ke tim
+-- Loss Prevention & Investigasi Gudang!
+--
+-- Referensi SOP:
+-- 02_SOP_DAN_KAMUS_METRIK_LOGISTIK.md (Bagian 6.2)
+--
+-- Kolom yang diharapkan (minimal):
+-- no_resi_awb | hub_id | nama_hub | total_scan_di_hub | scan_pertama | scan_terakhir
+-- ------------------------------------------------------------------------------
+
+-- TULIS KUERI ANDA DI SINI:
+
+
+
+
+-- ==============================================================================
 -- TEMA 1: SLA COMPLIANCE & ON-TIME DELIVERY (MACRO PERFORMANCE)
 -- ==============================================================================
 

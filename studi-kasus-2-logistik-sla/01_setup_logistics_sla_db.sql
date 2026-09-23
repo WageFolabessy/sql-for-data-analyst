@@ -98,7 +98,9 @@ CREATE TABLE fact_pengiriman (
 -- 3. Memuat attempt_ke (1, 2, 3) dan alasan_gagal_kirim untuk analisis FADR & NDR kurir.
 CREATE TABLE fact_tracking_event (
     event_id                BIGSERIAL PRIMARY KEY,
-    no_resi_awb             VARCHAR(50) NOT NULL REFERENCES fact_pengiriman(no_resi_awb),
+    -- CATATAN: Di arsitektur event stream logistik modern (Kafka / Event Lake), FK tidak di-enforce
+    -- agar pipeline ingest tidak macet ketika terjadi unmanifested scan (paket nyasar).
+    no_resi_awb             VARCHAR(50) NOT NULL,
     event_code              VARCHAR(50) NOT NULL, -- PICKUP, HUB_IN, HUB_OUT, DEL_OUT, DEL_OK, DEL_FAIL, RTS_IN
     hub_id                  VARCHAR(50) REFERENCES dim_hub(hub_id),
     kurir_id                VARCHAR(50) REFERENCES dim_kurir(kurir_id),

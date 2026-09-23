@@ -33,6 +33,8 @@ PERIHAL      : Temuan Audit Investigasi Q1 2026 & Rekomendasi Strategis Perbaika
 
 | Tema Analisis | Metrik Utama yang Diaudit | Nilai Faktual (Hasil SQL) | Target / Standar SOP | Status & Dampak Bisnis |
 | :--- | :--- | :--- | :--- | :--- |
+| **Tema 0: Data Hygiene** | Jitter Duplicate Scans Dibersihkan | *[Isi Jumlah Record]* | 0 duplikat | *[Deduplikasi sukses]* |
+| | Resi Hantu / Nyasar Terdeteksi | *[Isi Jumlah AWB]* | 0 paket unmanifested | *[Diamankan Loss Prevention]* |
 | **Tema 1: Macro SLA** | OTD Same Day Rate (%) | *[Isi %]* | $\ge 95,0\%$ | *[Jebol / Memenuhi]* |
 | | OTD Next Day Rate (%) | *[Isi %]* | $\ge 95,0\%$ | *[Jebol / Memenuhi]* |
 | | OTD Reguler Rate (%) | *[Isi %]* | $\ge 95,0\%$ | *[Jebol / Memenuhi]* |
@@ -48,6 +50,10 @@ PERIHAL      : Temuan Audit Investigasi Q1 2026 & Rekomendasi Strategis Perbaika
 ---
 
 ## 3. ANALISIS MENDALAM PER TEMA BISNIS
+
+### 3.0. Integritas Pipeline Data & Resolusi Anomali (Tema 0)
+* **Temuan Angka:** [Jelaskan berapa banyak pemindaian ganda jitter yang berhasil difilter dan berapa resi hantu yang ditemukan].
+* **Dampak Analitik:** [Jelaskan mengapa pembersihan ini krusial sebelum menghitung Dwell Time hub dan performa kurir].
 
 ### 3.1. Kinerja Kepatuhan SLA & Rute Kronis (Tema 1)
 * **Temuan Angka:** [Jelaskan rute mana saja yang mengalami keterlambatan paling parah dan rata-rata jam keterlambatan].

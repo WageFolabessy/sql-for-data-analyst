@@ -131,8 +131,8 @@
 
 | Nama Kolom | Tipe Data | Constraint | Keterangan & Catatan Analitik |
 | :--- | :--- | :--- | :--- |
-| `event_id` | `BIGSERIAL` | `PRIMARY KEY` | Kunci urut unik peristiwa. |
-| `no_resi_awb` | `VARCHAR(50)` | `NOT NULL, FK` | Relasi ke `fact_pengiriman(no_resi_awb)`. |
+| `event_id` | `BIGSERIAL` | `PRIMARY KEY` | Kunci urut unik fisik per peristiwa scan barcode. |
+| `no_resi_awb` | `VARCHAR(50)` | `NOT NULL` | Nomor resi paket. *Catatan Arsitektur: Pada event stream data lake (Kafka), kolom ini tidak dibebani hard FK agar ingestion lancar saat menerima scan paket nyasar (unmanifested scans).* |
 | `event_code` | `VARCHAR(50)` | `NOT NULL` | Kode peristiwa: `'PICKUP'`, `'HUB_IN'`, `'HUB_OUT'`, `'DEL_OUT'`, `'DEL_OK'`, `'DEL_FAIL'`, `'RTS_IN'`. |
 | `hub_id` | `VARCHAR(50)` | `NULLABLE, FK` | Fasilitas hub tempat peristiwa terjadi (digunakan untuk *Dwell Time*). |
 | `kurir_id` | `VARCHAR(50)` | `NULLABLE, FK` | Kurir penanggung jawab (terisi pada peristiwa delivery). |

@@ -116,3 +116,26 @@ Apabila paket mengalami keterlambatan kirim melampaui `promised_sla_timestamp`, 
 * `'Alamat Tidak Ditemukan'` (Alamat tidak lengkap, nomor rumah tidak ada, jalan buntu).
 * `'COD Ditolak Pembeli'` (Pembeli merasa tidak memesan, tidak punya uang, atau menolak membayar).
 * `'Cuaca Ekstrem'` (Banjir, pohon tumbang, akses jalan terputus).
+
+---
+
+## 6. STANDAR PEMBERSIHAN DATA & PIPELINE CLEANSING (DATA HYGIENE SOP)
+
+### 6.1. Protokol Deduplikasi Jitter Scan Barcode
+* **Definisi:** Pemindaian ganda yang tidak disengaja akibat pengulangan jaringan (*network retry*) atau tombol PDA kurir/sensor conveyor tertekan berkali-kali.
+* **Kriteria Anomali Jitter:**
+  Dua baris data atau lebih pada `fact_tracking_event` yang memiliki:
+  1. `no_resi_awb` yang sama,
+  2. `event_code` yang sama,
+  3. `hub_id` yang sama (atau `kurir_id` yang sama), dan
+  4. Selisih waktu dengan scan sebelumnya: $\le \mathbf{10\text{ detik}}$.
+* **Aturan Resolusi (SOP):**
+  * Selalu pertahankan **rekaman scan pertama** (`MIN(event_timestamp)` atau baris pertama dengan `ROW_NUMBER() = 1`).
+  * Seluruh rekaman duplikat berikutnya **WAJIB DIABAIKAN** dalam kueri penghitungan Dwell Time dan timeline pengiriman agar tidak merusak kalkulasi `LEAD()`.
+
+### 6.2. Protokol Paket Nyasar / Tanpa Manifes (Unmanifested Ghost Parcels)
+* **Definisi:** Paket fisik yang ter-scan di hub transit oleh tim sortir, namun nomor resinya tidak terdaftar di sistem pemesanan resmi (`fact_pengiriman`). Kasus ini lazim terjadi akibat salah kirim antarmitra ekspedisi (*cross-dock misroute*).
+* **Aturan Resolusi (SOP):**
+  * Wajib dideteksi menggunakan *Anti-Join* (`fact_tracking_event LEFT JOIN fact_pengiriman ON ... WHERE fact_pengiriman.no_resi_awb IS NULL`).
+  * Resi-resi ini **DILARANG** dimasukkan ke dalam pelaporan kepatuhan SLA/OTD resmi, melainkan wajib dialihkan ke *Laporan Harian Paket Nyasar (Over & Astray Report)* untuk diinvestigasi oleh tim *Loss Prevention*.
+
