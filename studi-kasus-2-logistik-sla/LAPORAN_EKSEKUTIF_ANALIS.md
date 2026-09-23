@@ -5,12 +5,15 @@
 ---
 
 ```text
-KLASIFIKASI : LAPORAN DIREKSI (EXECUTIVE DELIVERABLE)
+KLASIFIKASI : LAPORAN DIREKSI (EXECUTIVE BRIEFING DELIVERABLE)
 NOMOR DOKUMEN: REP/OPS-FIN/2026/Q1/042
-KEPADA       : Hendrawan Hartono, M.Sc. (Chief Operating Officer)
-               VP of Logistics Network & Head of Commercial Partnerships
-DARI         : Lead Operations & Commercial Data Analyst
 TANGGAL      : [Isi Tanggal Pengumpulan]
+
+KEPADA       : Hendrawan Hartono, M.Sc. (Chief Operating Officer)
+TEMBUSAN     : 1. Direktur Utama (CEO)
+               2. Vice President of Logistics Network
+               3. Head of Commercial Partnerships & Revenue Assurance
+DARI         : Endricho (Lead Operations & Commercial Analytics Specialist)
 PERIHAL      : Temuan Audit Investigasi Q1 2026 & Rekomendasi Strategis Perbaikan Jaringan NexLog
 ```
 
@@ -31,47 +34,47 @@ PERIHAL      : Temuan Audit Investigasi Q1 2026 & Rekomendasi Strategis Perbaika
 
 ## 2. MATRIKS RINGKASAN TEMUAN HASIL AUDIT
 
-| Tema Analisis | Metrik Utama yang Diaudit | Nilai Faktual (Hasil SQL) | Target / Standar SOP | Status & Dampak Bisnis |
+| Area Telaah Bisnis | Metrik Utama yang Diaudit | Nilai Faktual (Hasil SQL) | Target / Standar SOP | Status & Dampak Bisnis |
 | :--- | :--- | :--- | :--- | :--- |
-| **Tema 0: Data Hygiene** | Jitter Duplicate Scans Dibersihkan | *[Isi Jumlah Record]* | 0 duplikat | *[Deduplikasi sukses]* |
-| | Resi Hantu / Nyasar Terdeteksi | *[Isi Jumlah AWB]* | 0 paket unmanifested | *[Diamankan Loss Prevention]* |
-| **Tema 1: Macro SLA** | OTD Same Day Rate (%) | *[Isi %]* | $\ge 95,0\%$ | *[Jebol / Memenuhi]* |
-| | OTD Next Day Rate (%) | *[Isi %]* | $\ge 95,0\%$ | *[Jebol / Memenuhi]* |
-| | OTD Reguler Rate (%) | *[Isi %]* | $\ge 95,0\%$ | *[Jebol / Memenuhi]* |
-| | OTD Kargo Rate (%) | *[Isi %]* | $\ge 95,0\%$ | *[Jebol / Memenuhi]* |
-| **Tema 2: Mid-Mile Hub** | Fasilitas Transit Paling Macet | *[Nama Hub]* | $< 8\text{ jam}$ dwell | *[Isi avg dwell & backlog]* |
-| **Tema 3: Kurir Last-Mile** | Rata-rata Nasional FADR (%) | *[Isi %]* | $\ge 85,0\%$ | *[Isi status]* |
-| | Kurir Terindikasi Fake Attempt | *[Nama / ID Kurir]* | $< 45\%$ Rumah Kosong | *[Isi % anomali]* |
-| **Tema 4: COD & RTS** | Rasio Retur (RTS) COD vs Non-COD | *[COD: % \| Non: %]* | $< 8,0\%$ | *[Isi perbandingan]* |
+| **Data Hygiene & Manifes** | Jitter Duplicate Scans Dibersihkan | *[Isi Jumlah Record]* | 0 duplikat | *[Deduplikasi sukses]* |
+| | Resi Tanpa Manifes Terdeteksi | *[Isi Jumlah AWB]* | 0 paket unmanifested | *[Diamankan Loss Prevention]* |
+| **Macro SLA Performance** | OTD Same Day Rate (%) | *[Isi %]* | $\ge 95,00\%$ | *[Jebol / Memenuhi]* |
+| | OTD Next Day Rate (%) | *[Isi %]* | $\ge 95,00\%$ | *[Jebol / Memenuhi]* |
+| | OTD Reguler Rate (%) | *[Isi %]* | $\ge 95,00\%$ | *[Jebol / Memenuhi]* |
+| | OTD Kargo Rate (%) | *[Isi %]* | $\ge 95,00\%$ | *[Jebol / Memenuhi]* |
+| **Mid-Mile Hub Dwell Time**| Fasilitas Transit Paling Macet | *[Nama Hub]* | $< 8,0\text{ jam}$ dwell | *[Isi avg dwell & backlog]* |
+| **Last-Mile & Kurir KPI**  | Rata-rata Nasional FADR (%) | *[Isi %]* | $\ge 85,00\%$ | *[Isi status]* |
+| | Kurir Terindikasi Fake Attempt | *[Nama / ID Kurir]* | $< 45,00\%$ Rumah Kosong | *[Isi % anomali]* |
+| **Tata Kelola Arus Kas COD**| Rasio Retur (RTS) COD vs Non-COD | *[COD: % \| Non: %]* | $< 8,00\%$ | *[Isi perbandingan]* |
 | | Total Floating Cash COD | **Rp [Isi Nominal]** | Rp 0 (Disetor H+0) | *[Isi jumlah resi]* |
-| **Tema 5: Finansial** | Kebocoran Volumetrik (Lost Freight) | **Rp [Isi Nominal]** | Rp 0 | *[Isi total kg selisih]* |
+| **Revenue Assurance & Penalti**| Kebocoran Volumetrik (Lost Freight)| **Rp [Isi Nominal]** | Rp 0 | *[Isi total kg selisih]* |
 | | Liabilitas Denda Penalti SLA | **Rp [Isi Nominal]** | Minimal | *[Isi total penalti]* |
 
 ---
 
-## 3. ANALISIS MENDALAM PER TEMA BISNIS
+## 3. ANALISIS MENDALAM PER AREA OPERASIONAL & KOMERSIAL
 
-### 3.0. Integritas Pipeline Data & Resolusi Anomali (Tema 0)
+### 3.1. Integritas Pipeline Data & Resolusi Anomali (Bagian A)
 * **Temuan Angka:** [Jelaskan berapa banyak pemindaian ganda jitter yang berhasil difilter dan berapa resi hantu yang ditemukan].
 * **Dampak Analitik:** [Jelaskan mengapa pembersihan ini krusial sebelum menghitung Dwell Time hub dan performa kurir].
 
-### 3.1. Kinerja Kepatuhan SLA & Rute Kronis (Tema 1)
+### 3.2. Kinerja Kepatuhan SLA & Jalur Distribusi Kritis (Bagian B)
 * **Temuan Angka:** [Jelaskan rute mana saja yang mengalami keterlambatan paling parah dan rata-rata jam keterlambatan].
 * **Akar Masalah (Root Cause):** [Jelaskan faktor penyebab keterlambatan, misal ketergantungan line-haul antarpulau, selisih zona waktu, atau proses transit].
 
-### 3.2. Bottleneck Gudang Sortir & Waktu Mengendap (Tema 2)
+### 3.3. Bottleneck Gudang Sortir & Waktu Mengendap (Bagian C)
 * **Temuan Angka:** [Sebutkan hub mana yang memiliki dwell time terpanjang dan persentase paket tertahan > 24 jam].
 * **Dampak Operasional:** [Jelaskan bagaimana penumpukan di hub ini merembet ke keterlambatan pengantaran last-mile].
 
-### 3.3. Efisiensi Pengantaran Pertama & Integritas Kurir (Tema 3)
+### 3.4. Efisiensi Pengantaran Pertama & Integritas Kurir (Bagian D)
 * **Temuan Angka:** [Paparkan angka FADR dan nama kurir yang terbukti memiliki anomali alasan 'Rumah Kosong' di atas 65%].
 * **Indikasi Pelanggaran SOP:** [Jelaskan potensi kerugian reputasi perusahaan akibat kurir yang tidak benar-benar mendatangi alamat penerima].
 
-### 3.4. Arus Kas COD & Risiko Retur ke Penjual (Tema 4)
+### 3.5. Arus Kas COD & Risiko Retur ke Penjual (Bagian E)
 * **Temuan Angka:** [Bandingkan persentase RTS antara COD dan Non-COD, serta sebutkan nominal uang tunai mengambang yang belum disetor kurir].
 * **Risiko Likuiditas:** [Jelaskan bahaya penahanan uang COD terhadap kepercayaan merchant dan arus kas operasional].
 
-### 3.5. Kebocoran Pendapatan Volumetrik & Estimasi Denda Kontrak (Tema 5)
+### 3.6. Kebocoran Pendapatan Volumetrik & Estimasi Denda Kontrak (Bagian F)
 * **Temuan Angka:** [Rincikan selisih berat volumetrik vs fisik, potensi kehilangan pendapatan ongkir, dan estimasi denda penalti yang harus dibayar ke merchant Enterprise].
 * **Dampak Margin Perusahaan:** [Jelaskan bagaimana selisih ini mengikis laba bersih kuartal I 2026].
 
@@ -96,5 +99,6 @@ Berdasarkan temuan faktual di atas, kami merekomendasikan 3 langkah intervensi s
 ---
 
 *Disusun secara independen oleh:*  
-**Lead Operations & Commercial Analytics Specialist**  
+**Endricho**  
+Lead Operations & Commercial Analytics Specialist  
 *Divisi Data & Analytics - PT Nusantara Ekspres Logistik (NexLog)*

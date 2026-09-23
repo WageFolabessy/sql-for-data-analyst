@@ -1,98 +1,103 @@
 # MEMORANDUM OPERASIONAL DIREKSI
 **PT NUSANTARA EKSPRES LOGISTIK (NexLog)**  
-*Gedung Graha NexLog Lt. 18, Jl. TB Simatupang Kav. 88, Jakarta Selatan*
+*Gedung Graha NexLog Lantai 18, Jl. TB Simatupang Kav. 88, Jakarta Selatan 12520*
 
 ---
 
 ```text
 KLASIFIKASI : SANGAT RAHASIA (STRICTLY CONFIDENTIAL)
-NOMOR MEMO  : MEMO/OPS-DIR/2026/Q1/089
-KEPADA      : Lead Operations & Commercial Analytics Team
-DARI        : Chief Operating Officer (COO) & VP of Logistics Network
+NOMOR DOKUMEN: MEMO/OPS-DIR/2026/Q1/089
 TANGGAL     : 24 Maret 2026
-PERIHAL     : Audit Komprehensif Kinerja Kuartal I 2026: Kepatuhan SLA, Bottleneck Hub, 
-              Krisis Retur COD, Kebocoran Ongkir Volumetrik, dan Liabilitas Penalti
+
+KEPADA      : Endricho (Lead Operations & Commercial Analytics Specialist)
+DARI        : Hendrawan Hartono, M.Sc. (Chief Operating Officer)
+TEMBUSAN    : 1. Direktur Utama (Chief Executive Officer)
+              2. Vice President of Logistics Network
+              3. Head of Commercial Finance & Revenue Assurance
+PERIHAL     : Instruksi Audit Komprehensif Kinerja Kuartal I 2026: 
+              Kepatuhan SLA, Kemacetan Hub, Risiko COD, Kebocoran Volumetrik, dan Denda Penalti
 ```
 
 ---
 
 ### 1. LATAR BELAKANG & SITUASI KRISIS BISNIS
 
-Rekan-rekan Tim Analis,
+Saudara Endricho,
 
-Kuartal pertama 2026 menjadi periode paling menantang dalam sejarah operasional NexLog. Meskipun volume pengiriman dari klien platform *e-commerce* (*Shopee, Tokopedia, TikTok Shop, Lazada*) dan *enterprise brand partners* (*Samsung, Unilever, Erigo*) meningkat pesat hingga menembus ribuan paket per hari, laporan keuangan awal menunjukkan **penurunan margin bersih operasional yang sangat mengkhawatirkan**.
+Kuartal pertama 2026 mencatatkan ekspansi volume pengiriman yang sangat pesat bagi NexLog. Kemitraan strategis kita dengan platform niaga-el (*Shopee, Tokopedia, TikTok Shop, Lazada*) serta klien korporat (*Samsung, Unilever, Erigo*) telah mendorong kenaikan volume hingga menembus ribuan paket per hari. Namun, penutupan buku operasional awal menunjukkan **penurunan marjin laba bersih operasional yang signifikan dan berada di luar batas toleransi anggaran**.
 
-Kemitraan strategis kita dengan platform *e-commerce* berada di ujung tanduk:
-1. **Ancaman Pemutusan Kontrak & Pinalti:** Beberapa klien *Enterprise* melayangkan surat peringatan keras (*Notice of Breach*) akibat memburuknya ketepatan waktu pengiriman layanan ekspres (*Same Day* dan *Next Day*). Manajemen telah menerima klaim denda penalti keterlambatan yang nilainya diprediksi mencapai ratusan juta rupiah.
-2. **Krisis Arus Kas COD & Retur (*Return to Sender / RTS*):** Layanan *Cash on Delivery* (COD) yang diharapkan menjadi penggerak volume justru memicu tingginya paket retur kembali ke gudang penjual. Selain itu, bagian *Treasury* mencurigai adanya ratusan juta rupiah dana tunai tagihan COD yang belum disetorkan kurir ke kasir hub (*floating cash in transit*).
-3. **Kemacetan Alur Transit Antarpulau:** Gudang sortir transit utama kita dilaporkan kewalahan menangani lonjakan paket (*backlog*), menyebabkan paket "tertidur" berhari-hari sebelum diberangkatkan oleh armada truk atau pesawat kargo.
-4. **Kecurangan Dimensi Paket (*Volumetric Fraud*):** Divisi armada melaporkan kapasitas kubikasi truk tronton antarkota sering kali penuh sesak sebelum mencapai batas tonase berat fisik. Kami mencurigai banyak *merchant* sengaja mendeklarasikan berat fisik ringan untuk barang-barang berukuran besar agar membayar ongkos kirim murah.
+Secara spesifik, direksi menerima laporan eskalasi kritis dari berbagai lini bisnis:
+1. **Risiko Pemutusan Kontrak Korporat:** Beberapa mitra klien kategori *Enterprise* melayangkan Surat Peringatan Keras (*Notice of Breach*) atas kegagalan kepatuhan waktu pengiriman layanan ekspres (*Same Day* dan *Next Day*). Manajemen memperkirakan adanya liabilitas klaim denda penalti keterlambatan dalam jumlah besar.
+2. **Krisis Likuiditas Arus Kas COD & Tingginya Retur:** Layanan *Cash on Delivery* (COD) mengalami kegagalan kirim berulang yang berujung pada tingginya rasio pemulangan barang ke penjual (*Return to Sender / RTS*). Lebih lanjut, bagian Keuangan mencurigai adanya ratusan juta rupiah dana tunai penagihan COD yang tertahan di tangan kurir dan belum disetorkan ke kasir hub operasional (*floating cash in transit*).
+3. **Kemacetan Alur Sortir Mid-Mile:** Fasilitas hub transit utama antarpulau dilaporkan mengalami penumpukan barang (*critical backlog*), menyebabkan ribuan paket tertahan melebihi batas waktu toleransi standar sebelum dapat dimuat ke armada *line-haul*.
+4. **Kebocoran Pendapatan Volumetrik (*Revenue Leakage*):** Divisi armada melaporkan kapasitas kubikasi truk tronton telah penuh sebelum batas tonase tercapai. Terdapat indikasi kuat bahwa sejumlah pedagang (*merchant*) sengaja memanipulasi deklarasi dimensi fisik paket guna menghindari tarif kargo yang seharusnya.
 
-Direksi membutuhkan Anda untuk melakukan **audit investigasi menyeluruh berbasis data** menggunakan database operasional `logistics_sla_db`.
+Untuk merespons krisis ini secara terukur dan objektif, Anda ditugaskan memimpin **audit investigasi menyeluruh berbasis data** menggunakan basis data operasional `logistics_sla_db`.
 
 ---
 
-### 2. THIRTEEN STRATEGIC QUESTIONS (13 MASALAH BISNIS & DATA INTEGRITY)
+### 2. RUANG LINGKUP INVESTIGASI & INSTRUKSI KERJA DIREKSI
 
-Kami menginstruksikan tim Anda untuk memecahkan 13 pertanyaan investigasi di bawah ini dan menyajikan angka-angka faktual hasil audit:
+Direksi menginstruksikan Anda untuk menjawab 13 pertanyaan bisnis faktual di bawah ini yang terbagi ke dalam 6 area telaah operasional:
 
-#### 🧹 TEMA 0: DATA HYGIENE & EVENT STREAM CLEANSING (PRE-ANALYTICS GATEWAY)
-* **Kasus 0.1 (Audit & Pembersihan Jitter Duplicate Barcode Scans):**  
-  Perangkat PDA kurir di lapangan dan mesin *scanner conveyor* di hub sering mengalami *network retry* dan *sensor jitter*, menghasilkan pemindaian ganda berurutan pada resi dan status yang sama dalam selisih beberapa detik ($\le 10\text{ detik}$). Temukan total peristiwa pemindaian duplikat ini dan bangun logika deduplikasi data agar tidak merusak perhitungan durasi transit!
-* **Kasus 0.2 (Deteksi Paket Nyasar / Unmanifested Ghost Parcels):**  
-  Di lantai sortir hub transit, temukan nomor resi yang tercatat melakukan pemindaian barcode namun **tidak pernah terdaftar** di sistem order pengiriman resmi (`fact_pengiriman`). Identifikasi di hub transit mana saja paket-paket tanpa surat jalan ini tersangkut agar tim *Loss Prevention* dapat mengamankannya!
+#### BAGIAN A: INTEGRITAS DATA PEMINDAIAN & REKONSILIASI MANIFES (DATA HYGIENE)
+* **Kasus 0.1 (Audit & Pembersihan Jitter Duplicate Scans):**  
+  Perangkat pemindai barcode kurir di lapangan dan sensor otomatis di gudang sering mengalami pengulangan pengiriman data jaringan (*network retry*) atau pemindaian ganda dalam rentang waktu sangat singkat ($\le 10\text{ detik}$). Identifikasi total pemindaian duplikat ini per jenis peristiwa pemindaian, dan bangun logika deduplikasi agar tidak mendistorsi perhitungan durasi singgah gudang (*Dwell Time*)!
+* **Kasus 0.2 (Deteksi Paket Tanpa Manifes / Unmanifested Ghost Parcels):**  
+  Identifikasi seluruh nomor resi yang tercatat melakukan aktivitas pemindaian di fasilitas hub transit namun **tidak terdaftar** dalam sistem manifes order resmi (`fact_pengiriman`). Tentukan fasilitas hub mana saja yang menampung paket-paket tanpa surat jalan ini agar tim *Loss Prevention* dapat segera melakukan pengamanan fisik!
 
-#### 📦 TEMA 1: SLA COMPLIANCE & ON-TIME DELIVERY (MACRO PERFORMANCE)
-* **Kasus 1.1 (Audit Kepatuhan OTD Makro):**  
-  Berapa persentase ketepatan waktu pengiriman (*On-Time Delivery Rate / OTD %*) untuk masing-masing tipe layanan (`Same Day`, `Next Day`, `Reguler`, `Kargo`) selama Q1 2026? Layanan mana saja yang jebol dan gagal memenuhi standar kepatuhan industri (95%)?
-* **Kasus 1.2 (10 Rute Antarkota Paling Kronis / Chronic Delay Lanes):**  
-  Tunjukkan 10 pasangan rute antarkota (*Origin Hub $\rightarrow$ Destination Hub*) dengan persentase kegagalan SLA tertinggi beserta rata-rata durasi keterlambatannya (dalam satuan jam). Rute mana yang menjadi biang kerok keluhan merchant?
+#### BAGIAN B: KEPATUHAN SERVICE LEVEL AGREEMENT & RUTE KRITIS (MACRO PERFORMANCE)
+* **Kasus 1.1 (Audit Kepatuhan On-Time Delivery Makro):**  
+  Hitung persentase ketepatan waktu pengiriman (*On-Time Delivery Rate / OTD %*) untuk setiap jenis layanan (`Same Day`, `Next Day`, `Reguler`, `Kargo`) selama Q1 2026. Identifikasi layanan mana saja yang gagal memenuhi standar kepatuhan minimum industri (95,0%)!
+* **Kasus 1.2 (Pemetaan 10 Jalur Pengiriman Paling Kronis / Chronic Delay Lanes):**  
+  Tentukan 10 pasangan rute antarkota (*Origin Hub $\rightarrow$ Destination Hub*) dengan tingkat kegagalan SLA tertinggi (filter volume $\ge 30$ pengiriman) beserta rata-rata jam keterlambatannya. Jalur mana yang menjadi kontributor utama keluhan pelanggan?
 
-#### 🏭 TEMA 2: SORTING HUB BOTTLENECK & TRANSIT DWELL TIME (MID-MILE AUDIT)
+#### BAGIAN C: EFISIENSI GUDANG SORTIR & WAKTU SINGGAH (MID-MILE DWELL TIME)
 * **Kasus 2.1 (Audit Waktu Mengendap di Gudang Transit / Hub Dwell Time):**  
-  Dengan melacak riwayat pemindaian barcode paket, berapa rata-rata waktu yang dihabiskan paket saat singgah di masing-masing fasilitas hub (*dwell time* dari status masuk `HUB_IN` hingga status keluar `HUB_OUT`)?
-* **Kasus 2.2 (Identifikasi Gudang Transit Paling Macet / Congested Hub):**  
-  Fasilitas gudang transit mana yang mengalami penumpukan paket paling parah dengan volume paket menginap lebih dari 24 jam (*backlog critical*) tertinggi?
+  Dengan memanfaatkan data pemindaian barcode yang telah dibersihkan dari duplikasi, hitung rata-rata waktu singgah (*average dwell time*) paket pada masing-masing fasilitas hub (dari status `HUB_IN` hingga `HUB_OUT`) beserta persentil ke-95 (*P95 Dwell Time*)!
+* **Kasus 2.2 (Identifikasi Fasilitas Gudang Paling Macet / Congested Hub):**  
+  Fasilitas hub mana yang mencatatkan volume dan persentase paket tertahan di atas 24 jam (*critical backlog*) tertinggi, yang mengindikasikan kegagalan kapasitas penyortiran atau keterbatasan jadwal keberangkatan armada *line-haul*?
 
-#### 🛵 TEMA 3: LAST-MILE FLEET & FIRST-ATTEMPT DELIVERY RATE (COURIER KPI)
+#### BAGIAN D: PRODUKTIVITAS & AUDIT KEPATUHAN KURIR PENGANTARAN (LAST-MILE)
 * **Kasus 3.1 (Efisiensi Pengantaran Pertama / First-Attempt Delivery Rate - FADR):**  
-  Berapa rasio keberhasilan pengantaran paket pada percobaan pertama (*1st Attempt*) di masing-masing Hub Pengantaran (*Delivery DC*), dan berapa porsi paket yang harus diantar berulang kali (2 hingga 3 kali) oleh kurir?
-* **Kasus 3.2 (Audit Integritas Kurir & Deteksi Fake Delivery Attempt):**  
-  Bongkar sebaran alasan gagal kirim (*Non-Delivery Report / NDR*). Temukan personel kurir yang memiliki frekuensi alasan *"Rumah Kosong"* di atas batas kewajaran operasional yang terindikasi melakukan pemalsuan percobaan kirim (*fake attempt* tanpa mendatangi alamat).
+  Berapa rasio keberhasilan pengantaran paket pada percobaan pertama (*Attempt 1*) di masing-masing Hub Pengantaran (*Delivery DC*), dan berapa proporsi paket yang memerlukan percobaan kirim ulang (2 hingga 3 kali)?
+* **Kasus 3.2 (Investigasi Integritas Kurir & Deteksi Fake Delivery Attempt):**  
+  Audit sebaran alasan kegagalan pengantaran (*Non-Delivery Report / NDR*). Temukan personel kurir dengan volume kegagalan minimal 15 paket yang mencatatkan proporsi alasan *"Rumah Kosong"* melampaui batas kewajaran operasional ($> 65\%$), yang terindikasi melakukan pemalsuan status pengantaran tanpa mendatangi alamat penerima!
 
-#### 💵 TEMA 4: E-COMMERCE CASH FLOW: COD & RETURN TO SENDER (RTS) RISK
-* **Kasus 4.1 (Tingkat Kegagalan & Retur Pesanan COD):**  
-  Berapa tingkat kegagalan kirim yang berujung retur ke penjual (*Return to Sender / RTS*) pada pesanan dengan metode pembayaran COD dibandingkan pesanan Non-COD? Wilayah tujuan mana yang paling berisiko tinggi untuk pesanan COD?
-* **Kasus 4.2 (Audit Uang Tunai COD Mengambang / Floating Cash in Transit):**  
-  Berapa total lembar resi dan akumulasi nominal rupiah uang hasil tagihan COD yang status barangnya sudah berhasil diserahkan ke pembeli (`DELIVERED`), namun uangnya belum disetorkan kurir ke kasir hub (*unsettled floating cash*)? Siapa saja kurir pemegang dana terbesar?
+#### BAGIAN E: PENGENDALIAN RISIKO PEMBAYARAN TUNAI (COD & SETTLEMENT)
+* **Kasus 4.1 (Evaluasi Risiko Retur Pesanan COD / Return to Sender Rate):**  
+  Bandingkan persentase kegagalan kirim yang berujung retur ke penjual (`RETURN_TO_SENDER`) antara pesanan metode pembayaran COD dengan Non-COD. Wilayah tujuan mana yang memiliki tingkat risiko penolakan COD paling kritis?
+* **Kasus 4.2 (Rekonsiliasi Dana Tunai Mengambang / Floating Cash in Transit):**  
+  Hitung total lembar resi dan akumulasi nilai rupiah uang hasil tagihan COD yang status fisiknya telah berhasil diterima konsumen (`DELIVERED`), namun belum disetorkan kurir ke kasir hub operasional (`waktu_setor_kasir IS NULL`). Laporkan daftar 5 kurir dengan nominal dana mengambang terbesar!
 
-#### ⚖️ TEMA 5: REVENUE LEAKAGE, PENALTY EXPOSURE, & EXECUTIVE STRATEGY
-* **Kasus 5.1 (Audit Kebocoran Pendapatan Berat Volumetrik / Weight Fraud):**  
-  Berapa total selisih kilogram antara berat aktual yang dideklarasikan *merchant* dengan berat volumetrik yang seharusnya ditagihkan, dan berapa estimasi total potensi pendapatan ongkir yang hilang (*Lost Freight Revenue*) akibat kelalaian timbangan di pos asal?
-* **Kasus 5.2 (Perhitungan Eksposur Liabilitas Denda Penalti SLA):**  
-  Berdasarkan klausul kontrak kerjasama dengan para *Enterprise Merchants*, hitung total kewajiban denda kompensasi penalti keterlambatan yang harus dibayarkan NexLog pada kuartal ini! Klien *merchant* mana yang menuntut ganti rugi terbesar?
-* **Kasus 5.3 (Rekomendasi Keputusan Eksekutif / Executive Decision BLUF):**  
-  Tuliskan memo balasan ringkas (maksimal 1 halaman) yang berisi rangkuman temuan angka paling kritis dan berikan **3 rekomendasi aksi bisnis konkret** untuk rapat pimpinan direksi hari Senin depan.
+#### BAGIAN F: AUDIT KEBOCORAN FINANSIAL & LIABILITAS KOMERSIAL (REVENUE ASSURANCE)
+* **Kasus 5.1 (Audit Manipulasi Berat Volumetrik / Weight Fraud):**  
+  Hitung total selisih kilogram antara berat aktual yang dideklarasikan pedagang dengan berat volumetrik yang seharusnya ditagihkan (sesuai standar divisor 6.000 untuk ekspres dan 5.000 untuk kargo). Berapa estimasi potensi pendapatan ongkos kirim yang hilang (*Lost Freight Revenue*)? Pedagang (*merchant*) mana yang melakukan pelanggaran terberat?
+* **Kasus 5.2 (Perhitungan Eksposur Liabilitas Denda Penalti Kontrak SLA):**  
+  Berdasarkan klausul kontrak komersial penalti keterlambatan, hitung total kewajiban denda kompensasi yang wajib dibayarkan NexLog kepada para mitra *Enterprise* pada Q1 2026, serta uraikan sebarannya per tingkatan (*tier*) merchant!
+* **Kasus 5.3 (Penyusunan Rekomendasi Keputusan Eksekutif / Executive Decision Briefing):**  
+  Tuangkan sintesis analitik Anda ke dalam dokumen ringkas eksekutif berformat BLUF (*Bottom Line Up Front*) dengan menyertakan **3 rekomendasi aksi bisnis strategis** untuk dipresentasikan dalam Rapat Pimpinan Direksi.
 
 ---
 
-### 3. PEDOMAN KERJA & BATASAN OPERASIONAL
+### 3. STANDAR TATA KELOLA & PENGIRIMAN LAPORAN
 
-1. **Rujukan Aturan & Rumus Perusahaan:**  
-   Dalam menyusun kueri analitik, Anda dilarang berasumsi sendiri mengenai formula perhitungan. Gunakan dokumen resmi perusahaan yang tersimpan di:  
-   👉 **`02_SOP_DAN_KAMUS_METRIK_LOGISTIK.md`**  
-   *(Dokumen tersebut memuat formula baku OTD, divisor volumetrik, tabel tier penalti, dan kode operasional).*
-2. **Kamus Data & Struktur Skema:**  
-   Struktur tabel, relasi, tipe data, dan petunjuk penanganan zona waktu lokal dapat dipelajari pada:  
-   👉 **`03_KAMUS_DATA_DAN_SKEMA_LOGISTIK.md`**
+1. **Rujukan Prosedur & Formula:**  
+   Seluruh kueri analitik wajib mematuhi definisi matematis, toleransi ambang batas, dan acuan tarif resmi yang tertuang dalam dokumen pedoman operasional:  
+   *Berkas:* `docs/SOP_METRIK_DAN_FORMULA_LOGISTIK.md`
+2. **Kamus Arsitektur Data:**  
+   Relasi entitas, kamus kolom, serta tata cara penanganan zona waktu (`TIMESTAMPTZ` WIB, WITA, WIT) dapat dipelajari pada dokumentasi tata kelola data:  
+   *Berkas:* `docs/DATA_DICTIONARY_LOGISTICS.md`
 3. **Format Pengumpulan:**  
-   * Seluruh kueri SQL mandiri Anda dikumpulkan pada berkas **`04_jawaban_studi_kasus_2.sql`**.
-   * Laporan kesimpulan dan rekomendasi eksekutif disusun pada template **`05_LAPORAN_EKSEKUTIF_ANALIS.md`**.
+   * Seluruh kueri SQL mandiri disusun rapi pada berkas kerja: `workspace_analisis_sla.sql`.
+   * Laporan eksekutif beserta rekomendasi strategis dikumpulkan pada berkas deliverable: `LAPORAN_EKSEKUTIF_ANALIS.md`.
 
-Kami menantikan laporan audit faktual Anda. Kredibilitas dan efisiensi operasional NexLog berada di tangan analisis data Anda.
+Integritas data dan ketajaman analisis Anda akan menjadi dasar bagi Direksi dalam mengambil tindakan disipliner operasional, penataan ulang kontrak komersial, dan penyelamatan arus kas perusahaan.
 
-*Selamat bertugas,*
+Selamat menjalankan tugas penugasan ini.
+
+---
 
 **Hendrawan Hartono, M.Sc.**  
-*Chief Operating Officer (COO)*  
-PT Nusantara Ekspres Logistik (NexLog)
+Chief Operating Officer (COO)  
+*PT Nusantara Ekspres Logistik (NexLog)*

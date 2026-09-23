@@ -17,9 +17,9 @@
 │                                                    fact_pengiriman                                                      │
 │ (PK: no_resi_awb | Target Grain: 1 Pengiriman Paket / Nomor Resi)                                                       │
 │  - Relasi         : merchant_id (FK), hub_asal_id (FK), hub_tujuan_id (FK)                                              │
-│  - Dimensi Paket  : berat_aktual_kg, panjang_cm, lebar_cm, tinggi_cm, ongkir_tertagih, metode_pembayaran               │
-│  - Waktu Penting  : waktu_booking, waktu_pickup, promised_sla_timestamp, actual_delivered_timestamp, waktu_setor_kasir│
-│  - Status Akhir   : status_akhir ('DELIVERED', 'RETURN_TO_SENDER', 'LOST_IN_TRANSIT', 'DAMAGED')                       │
+│  - Dimensi Paket  : berat_aktual_kg, panjang_cm, lebar_cm, tinggi_cm, ongkir_tertagih, metode_pembayaran                │
+│  - Waktu Penting  : waktu_booking, waktu_pickup, promised_sla_timestamp, actual_delivered_timestamp, waktu_setor_kasir  │
+│  - Status Akhir   : status_akhir ('DELIVERED', 'RETURN_TO_SENDER', 'LOST_IN_TRANSIT', 'DAMAGED')                        │
 └───────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────┘
                                                             │ (1)
                                                             │
@@ -28,14 +28,14 @@
 │                                                 fact_tracking_event                                                     │
 │ (PK: event_id | Target Grain: 1 Peristiwa Pemindaian Barcode pada Paket)                                                │
 │  - Relasi         : no_resi_awb (FK), hub_id (FK), kurir_id (FK), vendor_id (FK)                                        │
-│  - Detail Scan    : event_code ('PICKUP', 'HUB_IN', 'HUB_OUT', 'DEL_OUT', 'DEL_OK', 'DEL_FAIL', 'RTS_IN')              │
+│  - Detail Scan    : event_code ('PICKUP', 'HUB_IN', 'HUB_OUT', 'DEL_OUT', 'DEL_OK', 'DEL_FAIL', 'RTS_IN')               │
 │  - Waktu & Kurir  : event_timestamp, attempt_ke (1, 2, 3), alasan_gagal_kirim                                           │
 └───────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────┘
                             ▲ (*)                                                            ▲ (*)
                             │                                                                │
 ┌───────────────────────────┴────────────────────────────┐       ┌───────────────────────────┴────────────────────────────┐
 │                      dim_armada_vendor                 │       │                       dim_kurir                        │
-│ (PK: vendor_id | Target Grain: 1 Vendor Line-Haul)     │       │ (PK: kurir_id | Target Grain: 1 Personel Kurir)         │
+│ (PK: vendor_id | Target Grain: 1 Vendor Line-Haul)     │       │ (PK: kurir_id | Target Grain: 1 Personel Kurir)        │
 └────────────────────────────────────────────────────────┘       └────────────────────────────────────────────────────────┘
 ```
 
