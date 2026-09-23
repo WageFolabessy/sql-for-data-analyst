@@ -59,7 +59,7 @@ WITH ranked_transactions AS (
     FROM fact_penjualan_header
 )
 SELECT 
-    COUNT(*)                             AS total_transaksi_sebelum_diduplikasi,
+    COUNT(*) AS total_transaksi_sebelum_diduplikasi,
     COUNT(*) FILTER (WHERE row_num = 1)  AS total_transaksi_sesudah_diduplikasi,
     COUNT(*) FILTER (WHERE row_num > 1)  AS total_selisih_duplikat_dibuang
 FROM ranked_transactions;
