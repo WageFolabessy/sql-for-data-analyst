@@ -119,8 +119,21 @@ ORDER BY total_scan_kotor DESC;
 
 -- TULIS KUERI ANDA DI SINI:
 
-
-
+SELECT
+	fte.no_resi_awb,
+	dh.hub_id,
+	dh.nama_hub,
+	COUNT(*) AS total_scan_di_hub,
+	MIN(fte.event_timestamp) AS scan_pertama,
+	MAX(fte.event_timestamp) AS scan_terakhir
+FROM fact_tracking_event fte
+INNER JOIN dim_hub dh
+	ON fte.hub_id = dh.hub_id
+LEFT JOIN fact_pengiriman fp
+	ON fte.no_resi_awb = fp.no_resi_awb
+WHERE fp.no_resi_awb IS NULL
+GROUP BY fte.no_resi_awb, dh.hub_id, dh.nama_hub
+ORDER BY total_scan_di_hub DESC, scan_pertama ASC;
 
 -- ==============================================================================
 -- BAGIAN B: KEPATUHAN SERVICE LEVEL AGREEMENT & RUTE KRITIS (MACRO PERFORMANCE)
