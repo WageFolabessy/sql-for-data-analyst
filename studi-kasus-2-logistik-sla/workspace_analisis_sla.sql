@@ -157,9 +157,32 @@ ORDER BY total_scan_di_hub DESC, scan_pertama ASC;
 -- ------------------------------------------------------------------------------
 
 -- TULIS KUERI ANDA DI SINI:
-
-
-
+WITH agregasi_layanan AS (
+	SELECT 
+		layanan,
+		COUNT(*) AS total_paket,
+		COUNT(*) FILTER (WHERE status_akhir = 'DELIVERED' AND actual_delivered_timestamp <= promised_sla_timestamp) AS total_on_time
+	FROM fact_pengiriman
+	GROUP BY layanan
+),
+kalkulasi_otd AS (
+	SELECT
+		layanan,
+		total_paket,
+		total_on_time,
+		(total_paket - total_on_time) AS total_breach,
+		ROUND(100.0 * total_on_time / total_paket, 2) AS otd_percentage
+	FROM agregasi_layanan
+)
+SELECT 
+	*,
+	CASE 
+        WHEN otd_percentage >= 95.0
+        THEN 'PATUH' 
+        ELSE 'JEBOL' 
+    END AS status_kepatuhan
+FROM kalkulasi_otd
+ORDER BY otd_percentage ASC;
 
 -- ------------------------------------------------------------------------------
 -- KASUS 1.2: Pemetaan 10 Jalur Pengiriman Paling Kronis (Chronic Delay Lanes)
