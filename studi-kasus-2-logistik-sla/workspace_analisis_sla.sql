@@ -18,7 +18,7 @@ SELECT * FROM dim_merchant;
 SELECT * FROM dim_kurir;
 SELECT * FROM dim_armada_vendor;
 SELECT * FROM fact_pengiriman;
-SELECT * FROM fact_tracking_event;
+SELECT * FROM v_clean_tracking_event;
 
 CREATE OR REPLACE VIEW v_clean_tracking_event AS
 WITH deduplikasi AS (
@@ -28,7 +28,6 @@ WITH deduplikasi AS (
                ORDER BY event_timestamp
            ) AS prev_timestamp
     FROM fact_tracking_event
-    WHERE no_resi_awb NOT ILIKE '%GHOST%' -- Eliminasi resi hantu
 )
 SELECT 
     event_id,
@@ -43,7 +42,7 @@ SELECT
 FROM deduplikasi
 WHERE prev_timestamp IS NULL 
    OR EXTRACT(EPOCH FROM (event_timestamp - prev_timestamp)) > 10
-ORDER BY event_id ASC;
+ORDER BY event_timestamp ASC, event_id ASC
 
 -- ==============================================================================
 -- BAGIAN A: INTEGRITAS DATA PEMINDAIAN & REKONSILIASI MANIFES (DATA HYGIENE)
@@ -265,8 +264,51 @@ LIMIT 10;
 
 -- TULIS KUERI ANDA DI SINI:
 
-
-
+WITH hub_visits AS (
+-- Pasangkan HUB_IN dengan HUB_OUT berikutnya per resi dan per hub
+    SELECT 
+        no_resi_awb,
+        hub_id,
+        event_code,
+        event_timestamp AS in_timestamp,
+        LEAD(event_timestamp) OVER (
+            PARTITION BY no_resi_awb, hub_id 
+            ORDER BY event_timestamp ASC
+        ) AS out_timestamp,
+        LEAD(event_code) OVER (
+            PARTITION BY no_resi_awb, hub_id 
+            ORDER BY event_timestamp ASC
+        ) AS next_event_code
+    FROM v_clean_tracking_event
+    WHERE event_code IN ('HUB_IN', 'HUB_OUT')
+),
+dwell_per_package AS (
+-- Ambil pasangan yang valid dan hitung durasi jamnya
+    SELECT 
+        hub_id,
+        no_resi_awb,
+        EXTRACT(EPOCH FROM (out_timestamp - in_timestamp)) / 3600.0 AS dwell_time_jam
+    FROM hub_visits
+    WHERE event_code = 'HUB_IN' 
+      AND next_event_code = 'HUB_OUT'
+)
+SELECT 
+    d.hub_id,
+    dh.nama_hub,
+    dh.tipe_hub,
+    dh.kota,
+    COUNT(*) AS total_kunjungan_paket,
+    ROUND(AVG(d.dwell_time_jam)::NUMERIC, 2) AS avg_dwell_time_jam,
+    ROUND(PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY d.dwell_time_jam)::NUMERIC, 2) AS p95_dwell_time_jam
+FROM dwell_per_package d
+INNER JOIN dim_hub dh 
+    ON d.hub_id = dh.hub_id
+GROUP BY 
+    d.hub_id, 
+    dh.nama_hub, 
+    dh.tipe_hub, 
+    dh.kota
+ORDER BY avg_dwell_time_jam DESC;
 
 -- ------------------------------------------------------------------------------
 -- KASUS 2.2: Identifikasi Fasilitas Hub dengan Backlog Kritis (> 24 Jam)
