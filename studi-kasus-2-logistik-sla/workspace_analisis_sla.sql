@@ -13,6 +13,12 @@
 --    Self-Join, dsb.). Pilihlah pendekatan yang paling efisien, akurat, dan mudah dipahami!
 -- ==============================================================================
 
+SELECT * FROM dim_hub;
+SELECT * FROM dim_merchant;
+SELECT * FROM dim_kurir;
+SELECT * FROM dim_armada_vendor;
+SELECT * FROM fact_pengiriman;
+SELECT * FROM fact_tracking_event;
 
 -- ==============================================================================
 -- BAGIAN A: INTEGRITAS DATA PEMINDAIAN & REKONSILIASI MANIFES (DATA HYGIENE)
@@ -39,9 +45,58 @@
 -- ------------------------------------------------------------------------------
 
 -- TULIS KUERI ANDA DI SINI:
+-- ==============================================================================
+-- KASUS 0.1: Audit & Pembersihan Jitter Duplicate Barcode Scans
+-- ==============================================================================
 
-
-
+WITH tracking_lagged AS (
+    SELECT 
+        event_id,
+        no_resi_awb,
+        event_code,
+        hub_id,
+        kurir_id,
+        event_timestamp,
+        -- Mengambil waktu pemindaian sebelumnya pada paket, event, dan lokasi/kurir yang sama
+        LAG(event_timestamp) OVER (
+            PARTITION BY 
+                no_resi_awb, 
+                event_code, 
+                COALESCE(hub_id, ''), 
+                COALESCE(kurir_id, '')
+            ORDER BY event_timestamp ASC, event_id ASC
+        ) AS prev_event_timestamp
+    FROM fact_tracking_event
+),
+flagged_jitter AS (
+    SELECT 
+        event_id,
+        no_resi_awb,
+        event_code,
+        hub_id,
+        kurir_id,
+        event_timestamp,
+        -- Tandai pemindaian duplikat jika selisih waktu <= 10 detik dari pemindaian sebelumnya
+        CASE 
+            WHEN prev_event_timestamp IS NOT NULL 
+                 AND EXTRACT(EPOCH FROM (event_timestamp - prev_event_timestamp)) <= 10 
+            THEN 1 
+            ELSE 0 
+        END AS is_jitter_duplicate
+    FROM tracking_lagged
+)
+SELECT 
+    event_code,
+    COUNT(*) AS total_scan_kotor,
+    COUNT(*) FILTER (WHERE is_jitter_duplicate = 0) AS total_scan_bersih,
+    COUNT(*) FILTER (WHERE is_jitter_duplicate = 1) AS total_jitter_duplicate,
+    ROUND(
+        (100.0 * COUNT(*) FILTER (WHERE is_jitter_duplicate = 1)::NUMERIC / COUNT(*)), 
+        2
+    ) AS pct_jitter_duplikasi
+FROM flagged_jitter
+GROUP BY event_code
+ORDER BY total_scan_kotor DESC;
 
 -- ------------------------------------------------------------------------------
 -- KASUS 0.2: Deteksi Paket Tanpa Manifes (Unmanifested Ghost Parcels)
