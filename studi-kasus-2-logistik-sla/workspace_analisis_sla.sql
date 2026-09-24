@@ -197,9 +197,24 @@ ORDER BY otd_percentage ASC;
 -- ------------------------------------------------------------------------------
 
 -- TULIS KUERI ANDA DI SINI:
-
-
-
+SELECT
+	CONCAT(dha.nama_hub, ' -> ', dht.nama_hub, ' (', dha.kota, ' - ', dht.kota, ')') AS rute_pengiriman,
+	dha.nama_hub AS hub_asal,
+	dht.nama_hub AS hub_tujuan,
+	COUNT(*) AS total_pengiriman,
+	COUNT(*) FILTER (WHERE fp.actual_delivered_timestamp > fp.promised_sla_timestamp OR fp.status_akhir <> 'DELIVERED') AS total_terlambat,
+	ROUND(100.0 * COUNT(*) FILTER (WHERE fp.actual_delivered_timestamp > fp.promised_sla_timestamp OR fp.status_akhir <> 'DELIVERED') / COUNT(*), 2) AS persentase_gagal_sla,
+	ROUND(AVG(EXTRACT(EPOCH FROM (fp.actual_delivered_timestamp - fp.promised_sla_timestamp)) / 3600.0) 
+FILTER (WHERE fp.actual_delivered_timestamp > fp.promised_sla_timestamp), 2) AS avg_jam_keterlambatan
+FROM fact_pengiriman fp
+INNER JOIN dim_hub dha
+	ON fp.hub_asal_id = dha.hub_id
+INNER JOIN dim_hub dht
+	ON fp.hub_tujuan_id = dht.hub_id
+GROUP BY fp.hub_asal_id, fp.hub_tujuan_id, dha.hub_id, dht.hub_id, dha.nama_hub, dht.nama_hub
+HAVING COUNT(*) >= 30
+ORDER BY persentase_gagal_sla DESC, total_terlambat DESC, total_pengiriman DESC
+LIMIT 10;
 
 -- ==============================================================================
 -- BAGIAN C: EFISIENSI GUDANG SORTIR & WAKTU SINGGAH (MID-MILE DWELL TIME)
