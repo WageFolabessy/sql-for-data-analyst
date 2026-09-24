@@ -20,6 +20,31 @@ SELECT * FROM dim_armada_vendor;
 SELECT * FROM fact_pengiriman;
 SELECT * FROM fact_tracking_event;
 
+CREATE OR REPLACE VIEW v_clean_tracking_event AS
+WITH deduplikasi AS (
+    SELECT *,
+           LAG(event_timestamp) OVER(
+               PARTITION BY no_resi_awb, event_code, COALESCE(hub_id, kurir_id)
+               ORDER BY event_timestamp
+           ) AS prev_timestamp
+    FROM fact_tracking_event
+    WHERE no_resi_awb NOT ILIKE '%GHOST%' -- Eliminasi resi hantu
+)
+SELECT 
+    event_id,
+    no_resi_awb, 
+    event_code, 
+    hub_id, 
+    kurir_id, 
+    vendor_id, 
+    event_timestamp, 
+    attempt_ke, 
+    alasan_gagal_kirim
+FROM deduplikasi
+WHERE prev_timestamp IS NULL 
+   OR EXTRACT(EPOCH FROM (event_timestamp - prev_timestamp)) > 10
+ORDER BY event_id ASC;
+
 -- ==============================================================================
 -- BAGIAN A: INTEGRITAS DATA PEMINDAIAN & REKONSILIASI MANIFES (DATA HYGIENE)
 -- ==============================================================================
@@ -157,6 +182,7 @@ ORDER BY total_scan_di_hub DESC, scan_pertama ASC;
 -- ------------------------------------------------------------------------------
 
 -- TULIS KUERI ANDA DI SINI:
+
 WITH agregasi_layanan AS (
 	SELECT 
 		layanan,
@@ -197,6 +223,7 @@ ORDER BY otd_percentage ASC;
 -- ------------------------------------------------------------------------------
 
 -- TULIS KUERI ANDA DI SINI:
+
 SELECT
 	CONCAT(dha.nama_hub, ' -> ', dht.nama_hub, ' (', dha.kota, ' - ', dht.kota, ')') AS rute_pengiriman,
 	dha.nama_hub AS hub_asal,
