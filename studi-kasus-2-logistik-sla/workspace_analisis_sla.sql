@@ -22,11 +22,16 @@ SELECT * FROM v_clean_tracking_event;
 
 CREATE OR REPLACE VIEW v_clean_tracking_event AS
 WITH deduplikasi AS (
-    SELECT *,
-           LAG(event_timestamp) OVER(
-               PARTITION BY no_resi_awb, event_code, COALESCE(hub_id, kurir_id)
-               ORDER BY event_timestamp
-           ) AS prev_timestamp
+    SELECT 
+        *,
+        LAG(event_timestamp) OVER (
+            PARTITION BY 
+                no_resi_awb, 
+                event_code, 
+                COALESCE(hub_id, ''), 
+                COALESCE(kurir_id, '')
+            ORDER BY event_timestamp ASC, event_id ASC
+        ) AS prev_timestamp
     FROM fact_tracking_event
 )
 SELECT 
@@ -41,8 +46,7 @@ SELECT
     alasan_gagal_kirim
 FROM deduplikasi
 WHERE prev_timestamp IS NULL 
-   OR EXTRACT(EPOCH FROM (event_timestamp - prev_timestamp)) > 10
-ORDER BY event_timestamp ASC, event_id ASC
+   OR EXTRACT(EPOCH FROM (event_timestamp - prev_timestamp)) > 10;
 
 -- ==============================================================================
 -- BAGIAN A: INTEGRITAS DATA PEMINDAIAN & REKONSILIASI MANIFES (DATA HYGIENE)
@@ -323,8 +327,58 @@ ORDER BY avg_dwell_time_jam DESC;
 
 -- TULIS KUERI ANDA DI SINI:
 
-
-
+WITH hub_visits AS (
+    -- Pasangkan HUB_IN dengan HUB_OUT berikutnya per resi dan per hub
+    SELECT 
+        no_resi_awb,
+        hub_id,
+        event_code,
+        event_timestamp AS in_timestamp,
+        LEAD(event_timestamp) OVER (
+            PARTITION BY no_resi_awb, hub_id 
+            ORDER BY event_timestamp ASC, event_id ASC
+        ) AS out_timestamp,
+        LEAD(event_code) OVER (
+            PARTITION BY no_resi_awb, hub_id 
+            ORDER BY event_timestamp ASC, event_id ASC
+        ) AS next_event_code
+    FROM v_clean_tracking_event
+    WHERE event_code IN ('HUB_IN', 'HUB_OUT')
+),
+dwell_per_package AS (
+    -- Ambil pasangan yang sah dan hitung durasi dwell time dalam jam
+    SELECT 
+        hub_id,
+        no_resi_awb,
+        EXTRACT(EPOCH FROM (out_timestamp - in_timestamp)) / 3600.0 AS dwell_time_jam
+    FROM hub_visits
+    WHERE event_code = 'HUB_IN' 
+      AND next_event_code = 'HUB_OUT'
+)
+-- Agregasi total transit, volume backlog > 24 jam, dan persentasenya
+SELECT 
+    vte.hub_id,
+    dh.nama_hub,
+    COUNT(*) AS total_transit,
+    COUNT(*) FILTER (WHERE vte.dwell_time_jam > 24.0) AS paket_tertahan_gt_24jam,
+    ROUND(
+        100.0 * COUNT(*) FILTER (WHERE vte.dwell_time_jam > 24.0) / COUNT(*), 
+        2
+    ) AS pct_critical_backlog,
+    CASE 
+        WHEN COUNT(*) FILTER (WHERE vte.dwell_time_jam > 24.0) > 0 
+        THEN 'CRITICAL BACKLOG' 
+        ELSE 'LANCAR / HEALTHY' 
+    END AS status_kemacetan
+FROM dwell_per_package vte
+INNER JOIN dim_hub dh 
+    ON vte.hub_id = dh.hub_id
+GROUP BY 
+    vte.hub_id, 
+    dh.nama_hub
+ORDER BY 
+    pct_critical_backlog DESC, 
+    paket_tertahan_gt_24jam DESC;
 
 -- ==============================================================================
 -- BAGIAN D: PRODUKTIVITAS & AUDIT KEPATUHAN KURIR PENGANTARAN (LAST-MILE)
