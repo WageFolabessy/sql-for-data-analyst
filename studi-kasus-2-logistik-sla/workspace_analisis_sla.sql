@@ -594,8 +594,59 @@ LIMIT 5;
 
 -- TULIS KUERI ANDA DI SINI:
 
-
-
+WITH kalkulasi_dimensi AS (
+    SELECT 
+        no_resi_awb,
+        merchant_id,
+        berat_aktual_kg,
+        (panjang_cm * lebar_cm * tinggi_cm)::NUMERIC / 
+        CASE 
+            WHEN layanan IN ('Same Day', 'Next Day', 'Reguler')
+            THEN 6000.0
+            ELSE 5000.0
+        END AS berat_volumetrik_mentah
+    FROM fact_pengiriman
+),
+standarisasi_bobot AS (
+    SELECT 
+        no_resi_awb,
+        merchant_id,
+        berat_aktual_kg,
+        berat_volumetrik_mentah,
+        CASE 
+            WHEN (berat_aktual_kg - FLOOR(berat_aktual_kg)) > 0.30 
+            THEN CEIL(berat_aktual_kg)
+            ELSE GREATEST(FLOOR(berat_aktual_kg), 1.0)
+        END AS berat_aktual_tagih,
+        CASE 
+            WHEN (berat_volumetrik_mentah - FLOOR(berat_volumetrik_mentah)) > 0.30 
+            THEN CEIL(berat_volumetrik_mentah)
+            ELSE GREATEST(FLOOR(berat_volumetrik_mentah), 1.0)
+        END AS berat_volumetrik_tagih
+    FROM kalkulasi_dimensi
+),
+audit_kebocoran AS (
+    SELECT 
+        merchant_id,
+        no_resi_awb,
+        berat_volumetrik_tagih,
+        berat_aktual_tagih,
+        (berat_volumetrik_tagih - berat_aktual_tagih) AS selisih_kg
+    FROM standarisasi_bobot
+    WHERE berat_volumetrik_tagih > berat_aktual_tagih
+)
+SELECT 
+    a.merchant_id,
+    dm.nama_merchant,
+    dm.tier_merchant,
+    COUNT(*) AS total_paket,
+    ROUND(SUM(a.selisih_kg)::NUMERIC, 2) AS total_under_declared_kg,
+    ROUND(SUM(a.selisih_kg * 10000.0)::NUMERIC, 2) AS estimasi_lost_revenue_rp
+FROM audit_kebocoran a
+INNER JOIN dim_merchant dm 
+    ON a.merchant_id = dm.merchant_id
+GROUP BY a.merchant_id, dm.nama_merchant, dm.tier_merchant
+ORDER BY estimasi_lost_revenue_rp DESC;
 
 -- ------------------------------------------------------------------------------
 -- KASUS 5.2: Perhitungan Eksposur Liabilitas Denda Penalti Kontrak SLA
