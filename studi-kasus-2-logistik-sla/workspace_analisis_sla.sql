@@ -398,8 +398,32 @@ ORDER BY
 
 -- TULIS KUERI ANDA DI SINI:
 
-
-
+SELECT
+    dh.hub_id,
+    dh.nama_hub AS hub_pengantaran,
+    dh.tipe_hub,
+    COUNT(*) FILTER (WHERE vte.event_code = 'DEL_OUT' AND vte.attempt_ke = 1) AS total_tugas_antar,
+    COUNT(*) FILTER (WHERE vte.event_code = 'DEL_OK' AND vte.attempt_ke = 1) AS sukses_attempt_1,
+    (
+        COUNT(*) FILTER (WHERE vte.event_code = 'DEL_OUT' AND vte.attempt_ke = 1) - 
+        COUNT(*) FILTER (WHERE vte.event_code = 'DEL_OK' AND vte.attempt_ke = 1)
+    ) AS butuh_attempt_2_plus,
+    ROUND(
+        (100.0 * COUNT(*) FILTER (WHERE vte.event_code = 'DEL_OK' AND vte.attempt_ke = 1) / 
+        NULLIF(COUNT(*) FILTER (WHERE vte.event_code = 'DEL_OUT' AND vte.attempt_ke = 1), 0))::NUMERIC, 
+        2
+    ) AS fadr_pct
+FROM v_clean_tracking_event vte
+INNER JOIN dim_hub dh 
+    ON vte.hub_id = dh.hub_id
+GROUP BY 
+    dh.hub_id, 
+    dh.nama_hub, 
+    dh.tipe_hub
+HAVING 
+    COUNT(*) FILTER (WHERE vte.event_code = 'DEL_OUT' AND vte.attempt_ke = 1) > 0
+ORDER BY 
+    fadr_pct ASC;
 
 -- ------------------------------------------------------------------------------
 -- KASUS 3.2: Investigasi Anomali Gagal Kirim & Indikasi Fake Delivery Attempt
@@ -416,8 +440,27 @@ ORDER BY
 
 -- TULIS KUERI ANDA DI SINI:
 
-
-
+SELECT
+	vte.kurir_id,
+	dk.nama_kurir,
+	dh.nama_hub AS hub_penugasan,
+	COUNT(*) AS total_gagal_kirim,
+	COUNT(*) FILTER (WHERE vte.alasan_gagal_kirim = 'Rumah Kosong') AS gagal_rumah_kosong,
+	ROUND(100.0 * COUNT(*) FILTER (WHERE vte.alasan_gagal_kirim = 'Rumah Kosong') / COUNT(*)::NUMERIC, 2) AS pct_rumah_kosong,
+	CASE 
+		WHEN ROUND(100.0 * COUNT(*) FILTER (WHERE vte.alasan_gagal_kirim = 'Rumah Kosong') / COUNT(*)::NUMERIC, 2) > 65.0
+		THEN 'INDIKASI FAKE ATTEMPT'
+		ELSE 'NORMAL'
+	END AS indikasi_fraud
+FROM v_clean_tracking_event vte
+INNER JOIN dim_kurir dk
+	ON vte.kurir_id = dk.kurir_id
+INNER JOIN dim_hub dh 
+    ON dk.hub_penugasan_id = dh.hub_id
+WHERE vte.event_code = 'DEL_FAIL'
+GROUP BY vte.kurir_id, dk.nama_kurir, dh.nama_hub
+HAVING COUNT(*) >= 15
+ORDER BY pct_rumah_kosong DESC;
 
 -- ==============================================================================
 -- BAGIAN E: PENGENDALIAN RISIKO PEMBAYARAN TUNAI (COD & SETTLEMENT)
