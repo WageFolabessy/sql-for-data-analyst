@@ -480,8 +480,40 @@ ORDER BY pct_rumah_kosong DESC;
 
 -- TULIS KUERI ANDA DI SINI:
 
+SELECT
+	fp.metode_pembayaran,
+	COUNT(*) AS total_pengiriman,
+	COUNT(*) FILTER (WHERE fp.status_akhir = 'DELIVERED') AS total_delivered,
+	COUNT(*) FILTER (WHERE fp.status_akhir = 'RETURN_TO_SENDER') AS total_rts,
+	ROUND(100.0 * COUNT(*) FILTER (WHERE fp.status_akhir = 'RETURN_TO_SENDER') / COUNT(*), 2) AS rts_rate_pct
+FROM fact_pengiriman fp 
+GROUP BY fp.metode_pembayaran
+ORDER BY rts_rate_pct DESC;
 
-
+-- Sebaran Risiko Retur COD per Hub/Kota Tujuan
+SELECT
+    dht.hub_id AS hub_tujuan_id,
+    dht.nama_hub AS hub_tujuan,
+    dht.kota,
+    dht.provinsi,
+    COUNT(*) AS total_paket_cod,
+    COUNT(*) FILTER (WHERE fp.status_akhir = 'DELIVERED') AS cod_delivered,
+    COUNT(*) FILTER (WHERE fp.status_akhir = 'RETURN_TO_SENDER') AS cod_rts,
+    ROUND(
+        (100.0 * COUNT(*) FILTER (WHERE fp.status_akhir = 'RETURN_TO_SENDER') / COUNT(*))::NUMERIC, 
+        2
+    ) AS rts_cod_pct
+FROM fact_pengiriman fp
+INNER JOIN dim_hub dht 
+    ON fp.hub_tujuan_id = dht.hub_id
+WHERE fp.metode_pembayaran = 'COD'
+GROUP BY 
+    dht.hub_id, 
+    dht.nama_hub, 
+    dht.kota, 
+    dht.provinsi
+HAVING COUNT(*) >= 20
+ORDER BY rts_cod_pct DESC;
 
 -- ------------------------------------------------------------------------------
 -- KASUS 4.2: Rekonsiliasi Dana Tunai Mengambang (Floating Cash in Transit)
