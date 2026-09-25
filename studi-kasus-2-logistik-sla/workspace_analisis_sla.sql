@@ -530,8 +530,49 @@ ORDER BY rts_cod_pct DESC;
 
 -- TULIS KUERI ANDA DI SINI:
 
+-- Ringkasan Nasional
+SELECT
+	COUNT(*) AS total_paket_cod,
+	SUM(fp.nilai_barang + fp.ongkir_tertagih) AS total_floating_cash
+FROM fact_pengiriman fp
+WHERE fp.metode_pembayaran = 'COD' AND fp.status_akhir = 'DELIVERED' AND fp.waktu_setor_kasir IS NULL;
 
-
+-- Top 5 Kurir Pemegang Floating Cash Terbanyak
+WITH delivered_cod_awb AS (
+    -- Filter paket COD delivered yang uangnya masih mengambang
+    SELECT 
+        no_resi_awb,
+        (nilai_barang + ongkir_tertagih) AS tagihan_cod
+    FROM fact_pengiriman
+    WHERE metode_pembayaran = 'COD' 
+      AND status_akhir = 'DELIVERED' 
+      AND waktu_setor_kasir IS NULL
+),
+kurir_delivery_ok AS (
+    -- Ambil tepat 1 pemindaian DEL_OK terakhir per nomor resi
+    SELECT DISTINCT ON (no_resi_awb)
+        no_resi_awb,
+        kurir_id
+    FROM v_clean_tracking_event
+    WHERE event_code = 'DEL_OK'
+    ORDER BY no_resi_awb, event_timestamp DESC, event_id DESC
+)
+SELECT
+    kdo.kurir_id,
+    dk.nama_kurir,
+    dh.nama_hub AS hub_penugasan,
+    COUNT(*) AS total_paket_cod,
+    SUM(dca.tagihan_cod) AS total_floating_cash
+FROM delivered_cod_awb dca
+INNER JOIN kurir_delivery_ok kdo 
+    ON dca.no_resi_awb = kdo.no_resi_awb
+INNER JOIN dim_kurir dk 
+    ON kdo.kurir_id = dk.kurir_id
+INNER JOIN dim_hub dh 
+    ON dk.hub_penugasan_id = dh.hub_id
+GROUP BY kdo.kurir_id, dk.nama_kurir, dh.nama_hub
+ORDER BY total_floating_cash DESC
+LIMIT 5;
 
 -- ==============================================================================
 -- BAGIAN F: AUDIT KEBOCORAN FINANSIAL & LIABILITAS KOMERSIAL (REVENUE ASSURANCE)
