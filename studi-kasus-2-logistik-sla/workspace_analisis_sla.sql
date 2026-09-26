@@ -665,9 +665,36 @@ ORDER BY estimasi_lost_revenue_rp DESC;
 
 -- TULIS KUERI ANDA DI SINI:
 
-
-
-
+WITH kalkulasi_denda AS (
+    SELECT
+        dm.tier_merchant,
+        ft.ongkir_tertagih,
+        CASE 
+            WHEN dm.tier_merchant = 'ENTERPRISE' 
+                THEN ROUND((dm.persentase_kompensasi_denda / 100.0)::NUMERIC * ft.ongkir_tertagih, 2)
+            WHEN dm.tier_merchant = 'REGULAR' 
+                 AND (EXTRACT(EPOCH FROM (ft.actual_delivered_timestamp - ft.promised_sla_timestamp)) / 3600.0) <= 12.0 
+                THEN ROUND(0.50 * ft.ongkir_tertagih, 2)
+            WHEN dm.tier_merchant = 'REGULAR' 
+                 AND (EXTRACT(EPOCH FROM (ft.actual_delivered_timestamp - ft.promised_sla_timestamp)) / 3600.0) > 12.0 
+                THEN ROUND(1.00 * ft.ongkir_tertagih, 2)
+            ELSE 0
+        END AS nilai_denda
+    FROM fact_pengiriman ft
+    INNER JOIN dim_merchant dm
+        ON ft.merchant_id = dm.merchant_id
+    WHERE ft.status_akhir = 'DELIVERED' AND ft.actual_delivered_timestamp > ft.promised_sla_timestamp
+)
+SELECT 
+    tier_merchant,
+    COUNT(*) AS total_paket_terlambat,
+    SUM(ongkir_tertagih) AS total_ongkir_terlambat,
+    SUM(nilai_denda) AS total_klaim_penalti_rp,
+    ROUND(SUM(nilai_denda) / NULLIF(COUNT(*), 0), 2) AS avg_penalti_per_paket
+FROM kalkulasi_denda
+GROUP BY tier_merchant
+ORDER BY total_klaim_penalti_rp DESC;
+	
 -- ------------------------------------------------------------------------------
 -- KASUS 5.3: Penyusunan Rekomendasi Keputusan Eksekutif (BLUF Briefing)
 -- ------------------------------------------------------------------------------
