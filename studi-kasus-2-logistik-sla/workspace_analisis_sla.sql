@@ -9,9 +9,6 @@
 --    - docs/MEMO_DIREKSI_OPERASIONAL.md (Mandat penugasan resmi dari COO)
 --    - docs/SOP_METRIK_DAN_FORMULA_LOGISTIK.md (Rumus baku OTD, volumetrik, penalti, dwell time)
 --    - docs/DATA_DICTIONARY_LOGISTICS.md (Struktur tabel, tipe data, dan zona waktu)
--- 2. Anda memiliki KEBEBASAN PENUH dalam merancang kueri (CTE, Subquery, Window Functions,
---    Self-Join, dsb.). Pilihlah pendekatan yang paling efisien, akurat, dan mudah dipahami!
--- ==============================================================================
 
 SELECT * FROM dim_hub;
 SELECT * FROM dim_merchant;
@@ -72,7 +69,6 @@ WHERE prev_timestamp IS NULL
 -- event_code | total_scan_kotor | total_jitter_duplicate | total_scan_bersih | pct_jitter_duplikasi
 -- ------------------------------------------------------------------------------
 
--- TULIS KUERI ANDA DI SINI:
 -- ==============================================================================
 -- KASUS 0.1: Audit & Pembersihan Jitter Duplicate Barcode Scans
 -- ==============================================================================
@@ -145,8 +141,6 @@ ORDER BY total_scan_kotor DESC;
 -- no_resi_awb | hub_id | nama_hub | total_scan_di_hub | scan_pertama | scan_terakhir
 -- ------------------------------------------------------------------------------
 
--- TULIS KUERI ANDA DI SINI:
-
 SELECT
 	fte.no_resi_awb,
 	dh.hub_id,
@@ -183,8 +177,6 @@ ORDER BY total_scan_di_hub DESC, scan_pertama ASC;
 -- Kolom yang diharapkan (minimal):
 -- layanan | total_paket | total_on_time | total_breach | otd_percentage | status_kepatuhan
 -- ------------------------------------------------------------------------------
-
--- TULIS KUERI ANDA DI SINI:
 
 WITH agregasi_layanan AS (
 	SELECT 
@@ -225,8 +217,6 @@ ORDER BY otd_percentage ASC;
 -- rute_pengiriman | hub_asal | hub_tujuan | total_pengiriman | total_terlambat | persentase_gagal_sla | avg_jam_keterlambatan
 -- ------------------------------------------------------------------------------
 
--- TULIS KUERI ANDA DI SINI:
-
 SELECT
 	CONCAT(dha.nama_hub, ' -> ', dht.nama_hub, ' (', dha.kota, ' - ', dht.kota, ')') AS rute_pengiriman,
 	dha.nama_hub AS hub_asal,
@@ -265,8 +255,6 @@ LIMIT 10;
 -- Kolom yang diharapkan (minimal):
 -- hub_id | nama_hub | tipe_hub | kota | total_kunjungan_paket | avg_dwell_time_jam | p95_dwell_time_jam
 -- ------------------------------------------------------------------------------
-
--- TULIS KUERI ANDA DI SINI:
 
 WITH hub_visits AS (
 -- Pasangkan HUB_IN dengan HUB_OUT berikutnya per resi dan per hub
@@ -324,8 +312,6 @@ ORDER BY avg_dwell_time_jam DESC;
 -- Kolom yang diharapkan (minimal):
 -- hub_id | nama_hub | total_transit | paket_tertahan_gt_24jam | pct_critical_backlog | status_kemacetan
 -- ------------------------------------------------------------------------------
-
--- TULIS KUERI ANDA DI SINI:
 
 WITH hub_visits AS (
     -- Pasangkan HUB_IN dengan HUB_OUT berikutnya per resi dan per hub
@@ -396,8 +382,6 @@ ORDER BY
 -- hub_pengantaran | total_tugas_antar | sukses_attempt_1 | butuh_attempt_2_plus | fadr_pct
 -- ------------------------------------------------------------------------------
 
--- TULIS KUERI ANDA DI SINI:
-
 SELECT
     dh.hub_id,
     dh.nama_hub AS hub_pengantaran,
@@ -438,8 +422,6 @@ ORDER BY
 -- kurir_id | nama_kurir | hub_penugasan | total_gagal_kirim | gagal_rumah_kosong | pct_rumah_kosong | indikasi_fraud
 -- ------------------------------------------------------------------------------
 
--- TULIS KUERI ANDA DI SINI:
-
 SELECT
 	vte.kurir_id,
 	dk.nama_kurir,
@@ -477,8 +459,6 @@ ORDER BY pct_rumah_kosong DESC;
 -- Kolom yang diharapkan (minimal):
 -- metode_pembayaran | total_pengiriman | total_delivered | total_rts | rts_rate_pct
 -- ------------------------------------------------------------------------------
-
--- TULIS KUERI ANDA DI SINI:
 
 SELECT
 	fp.metode_pembayaran,
@@ -527,8 +507,6 @@ ORDER BY rts_cod_pct DESC;
 -- Kolom yang diharapkan (minimal):
 -- Ringkasan Nasional & Top 5 Kurir Pemegang Floating Cash
 -- ------------------------------------------------------------------------------
-
--- TULIS KUERI ANDA DI SINI:
 
 -- Ringkasan Nasional
 SELECT
@@ -591,8 +569,6 @@ LIMIT 5;
 -- Kolom yang diharapkan (minimal):
 -- merchant_id | nama_merchant | tier_merchant | total_paket | total_under_declared_kg | estimasi_lost_revenue_rp
 -- ------------------------------------------------------------------------------
-
--- TULIS KUERI ANDA DI SINI:
 
 WITH kalkulasi_dimensi AS (
     SELECT 
@@ -663,8 +639,6 @@ ORDER BY estimasi_lost_revenue_rp DESC;
 -- tier_merchant | total_paket_terlambat | total_ongkir_terlambat | total_klaim_penalti_rp | avg_penalti_per_paket
 -- ------------------------------------------------------------------------------
 
--- TULIS KUERI ANDA DI SINI:
-
 WITH kalkulasi_denda AS (
     SELECT
         dm.tier_merchant,
@@ -694,10 +668,3 @@ SELECT
 FROM kalkulasi_denda
 GROUP BY tier_merchant
 ORDER BY total_klaim_penalti_rp DESC;
-	
--- ------------------------------------------------------------------------------
--- KASUS 5.3: Penyusunan Rekomendasi Keputusan Eksekutif (BLUF Briefing)
--- ------------------------------------------------------------------------------
--- Silakan tuangkan analisis komprehensif dan 3 rekomendasi strategis Anda
--- ke dalam berkas deliverable: LAPORAN_EKSEKUTIF_ANALIS.md!
--- ==============================================================================
