@@ -71,7 +71,7 @@ Menyimpan kontrak pokok pendanaan yang disalurkan dari Lender kepada Borrower.
 | `tenor_months` | `INTEGER` | Durasi kontrak pinjaman (bulan: 1, 3, 6, 12). |
 | `daily_interest_rate` | `NUMERIC(8,5)` | **Suku bunga harian kontrak (SEOJK 19/2023)**: Dikunci permanen pada tanggal originasi. |
 | `daily_penalty_rate` | `NUMERIC(8,5)` | **Tarif denda keterlambatan harian**: Dikunci permanen pada tanggal originasi (mengikuti batas suku bunga). |
-| `status` | `VARCHAR(20)` | Status pinjaman: `'ACTIVE'`, `'CLOSED'`, `'DEFAULTED'`, `'CANCELLED'`. |
+| `status` | `VARCHAR(20)` | Status pinjaman: `'ACTIVE'`, `'CLOSED'`, `'DEFAULTED'`, `'WRITTEN_OFF'`. Status `'WRITTEN_OFF'` diterapkan pada pinjaman macet lama (>270 hari) yang telah dihapusbukukan dari neraca aktif (`outstanding_principal = 0`), namun riwayat tunggakan di jadwal angsuran tetap ada. |
 | `outstanding_principal`| `NUMERIC(15,2)` | Sisa baki debet pokok pinjaman yang belum dilunasi per 27 September 2026. |
 | `is_capped_at_100_pct` | `BOOLEAN` | Flag kepatuhan plafon 100% OJK (`TRUE` jika akumulasi bunga+fee+denda telah menyentuh batas 100% dari `disbursed_principal`). |
 | `is_restructured_evergreen` | `BOOLEAN` | Flag audit indikasi *evergreening* (pelunasan semu DPD 89 diikuti pencairan baru). |

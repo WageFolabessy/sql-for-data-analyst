@@ -59,7 +59,7 @@ $$\text{TKB90} = 100\% - \text{TWP90}$$
 - **Ambang Batas Minimum**: $\text{TKB90} \ge 95,00\%$. TKB90 wajib ditampilkan secara mencolok pada laman beranda situs web dan aplikasi platform NusaModal.
 
 *Catatan Definisi Denominator*:
-- Denominator mencakup seluruh pinjaman berstatus aktif pada tanggal evaluasi yang memiliki sisa baki debet pokok (`outstanding_principal > 0`). Pinjaman yang sudah lunas (*CLOSED*) atau sudah dihapusbukukan (*WRITTEN-OFF*) tidak masuk dalam denominator baki debet aktif.
+- Denominator mencakup seluruh pinjaman berstatus aktif pada tanggal evaluasi yang memiliki sisa baki debet pokok (`outstanding_principal > 0`). Pinjaman yang sudah lunas (*CLOSED*) atau sudah dihapusbukukan (*WRITTEN_OFF*) tidak masuk dalam denominator baki debet aktif.
 
 ---
 
@@ -108,6 +108,7 @@ Analisis Vintage mengelompokkan pinjaman berdasarkan bulan pencairan (*originati
 
 *Peringatan Metodologis*:
 - **Denominator Wajib Tetap**: Pembagi kumulatif NPL adalah **Original Disbursed Principal di MOB 0** (nilai pokok awal saat dicairkan). Denominator tidak boleh menggunakan sisa saldo baki debet yang menyusut, karena akan memicu distorsi *survivorship bias*.
+- **Perlakuan Pinjaman WRITTEN_OFF**: Pinjaman yang telah dihapusbukukan (*WRITTEN_OFF*) **wajib tetap diperhitungkan sebagai gagal bayar kumulatif** sejak bulan terjadinya default. Penghapusbukuan adalah aksi akuntansi neraca, bukan pembatalan fakta gagal bayar historis.
 
 ---
 
@@ -128,16 +129,16 @@ Ketika debitur menyetorkan dana pembayaran angsuran, sistem akuntansi NusaModal 
 
 ### 8. Perpajakan Finansial P2P Lending (PMK No. 69/PMK.03/2022)
 
-Sesuai PMK No. 69/PMK.03/2022 Pasal 7, NusaModal ditunjuk sebagai pemotong pajak penghasilan atas imbal hasil (bunga) yang diterima atau diperoleh Pemberi Dana (*Lender*):
+Sesuai PMK No. 69/PMK.03/2022 Pasal 7 ayat (2), NusaModal ditunjuk sebagai pemotong pajak penghasilan atas imbal hasil (bunga) yang diterima atau diperoleh Pemberi Dana (*Lender*):
 
-1. **Wajib Pajak Dalam Negeri (WPDN)**:
-   - Dikenakan pemotongan **PPh Pasal 23 sebesar 15%** dari penghasilan bruto bunga.
-   - Jika Lender WPDN tidak memiliki NPWP, tarif pemotongan menjadi 100% lebih tinggi (yaitu **30%**).
-2. **Wajib Pajak Luar Negeri (WPLN / Institutional Foreign)**:
-   - Dikenakan pemotongan **PPh Pasal 26 sebesar 20%** dari penghasilan bruto bunga (kecuali terdapat Surat Keterangan Domisili / Tax Treaty P3B yang berlaku khusus).
-3. **Formula Net Yield Lender**:
-   $$\text{Gross Interest Earned} = \text{Tagihan Bunga Terbayar}$$
-   $$\text{Platform Margin Cut} = \text{Gross Interest} \times \text{platform\_fee\_pct}$$
-   $$\text{Net Taxable Interest} = \text{Gross Interest} - \text{Platform Margin Cut}$$
-   $$\text{Withholding Tax (PPh 23/26)} = \text{Net Taxable Interest} \times \text{tax\_rate}$$
-   $$\text{Net Cash Yield to Lender} = \text{Net Taxable Interest} - \text{Withholding Tax}$$
+1. **Dasar Pengenaan Pajak (DPP) Bunga Bruto**:
+   - Pemotongan PPh Pasal 23 dan PPh Pasal 26 dilakukan secara langsung **dari jumlah bruto bunga (*Gross Interest*)** yang dibayarkan oleh penerima pinjaman, tanpa dikurangi biaya operasional maupun bagi hasil platform.
+2. **Tarif Pemotongan Pajak Withholding**:
+   - **Wajib Pajak Dalam Negeri (WPDN) ber-NPWP**: Dikenakan PPh Pasal 23 sebesar **15%** dari bruto bunga.
+   - **WPDN tanpa NPWP**: Dikenakan tarif **30%** (asumsi studi kasus merujuk klausul Pasal 23 ayat (1a) UU PPh perihal sanksi kenaikan tarif 100% bagi wajib pajak yang tidak memiliki/mencantumkan NPWP).
+   - **Wajib Pajak Luar Negeri (WPLN / Institutional Foreign)**: Dikenakan PPh Pasal 26 sebesar **20%** dari bruto bunga (kecuali terdapat Tax Treaty / P3B khusus).
+3. **Formula Net Cash Yield Lender**:
+   $$\text{Gross Interest Earned} = \text{Tagihan Bunga Terbayar (Allocated Interest)}$$
+   $$\text{Withholding Tax (PPh 23/26)} = \text{Gross Interest Earned} \times \left(\frac{\text{tax\_rate\_pct}}{100}\right)$$
+   $$\text{Platform Margin Cut} = \text{Gross Interest Earned} \times \left(\frac{\text{platform\_margin\_pct}}{100}\right)$$
+   $$\text{Net Cash Yield to Lender} = \text{Gross Interest Earned} - \text{Withholding Tax} - \text{Platform Margin Cut}$$

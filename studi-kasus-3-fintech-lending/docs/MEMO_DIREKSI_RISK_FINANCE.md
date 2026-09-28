@@ -3,8 +3,8 @@
 **Kepada**: Endricho, Lead Credit Risk & Financial Analytics Specialist  
 **Dari**: Bambang Suryodipuro, CFA, FRM — Chief Risk & Operating Officer (CRO)  
 **Tembusan**: Dewan Direksi, Head of Compliance, Head of Finance & Treasury  
-**Tanggal**: 27 September 2026  
-**Perihal**: Mandat Investigasi Kualitas Portofolio Pinjaman, Integritas Rekening Escrow, dan Kepatuhan Regulasi OJK (Cutoff As-Of 27 September 2026)  
+**Tanggal**: 28 September 2026  
+**Perihal**: Mandat Investigasi Kualitas Portofolio Pinjaman, Integritas Rekening Escrow, dan Kepatuhan Regulasi OJK (Cutoff Penutupan Buku EOD 27 September 2026)  
 
 ---
 
@@ -18,7 +18,7 @@ Ada dua isu besar yang berpotensi menjadi temuan audit fatal dan membekukan izin
 1. **Lonjakan Rasio TWP90**: Estimasi agregat rasio Tingkat Wanprestasi > 90 hari (TWP90) kita terindikasi merayap naik dan mendekati batas atas regulasi **5,00%**. Sesuai **POJK No. 40/2024 dan SEOJK No. 19/SEOJK.06/2023**, apabila TWP90 melampaui 5,00%, OJK berwenang menjatuhkan sanksi administratif, publikasi penurunan TKB90 ke portal publik, hingga penghentian sementara fasilitas *disbursement* baru.
 2. **Discrepancy Rekonsiliasi Kas Escrow**: Laporan kilas dari tim Treasury mengindikasikan adanya selisih antara saldo pencatatan di *core ledger* sistem dengan rekening koran penampung (*Escrow/RDL Custodian Bank*). Kita tidak boleh memiliki dana mengendap tanpa pemilik (*unmapped*) maupun kebocoran akibat pencairan ganda.
 
-Komite Risiko dan Direksi menjadwalkan rapat darurat evaluasi portofolio. Saya menugaskan Anda memimpin audit analitis independen ini secara langsung ke database operasional `fintech_lending_db` per tanggal cutoff hari ini (**27 September 2026**).
+Komite Risiko dan Direksi menjadwalkan rapat darurat evaluasi portofolio siang ini. Saya menugaskan Anda memimpin audit analitis independen ini secara langsung ke database operasional `fintech_lending_db` per tanggal penutupan buku kemarin (**EOD 27 September 2026**).
 
 ---
 

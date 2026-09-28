@@ -2,7 +2,7 @@
 **Perusahaan**: PT Nusantara Modal Pintar (NusaModal)  
 **Kepada**: Bambang Suryodipuro, CFA, FRM — Chief Risk & Operating Officer (CRO)  
 **Dari**: Endricho, Lead Credit Risk & Financial Analytics Specialist  
-**Tanggal Laporan**: 27 September 2026  
+**Tanggal Laporan**: 28 September 2026  
 **Status Audit**: In Progress / Draft Evaluasi Komite Risiko  
 **Database Acuan**: `fintech_lending_db` (PostgreSQL 16)  
 
@@ -10,35 +10,35 @@
 
 ### 1. Ringkasan Eksekutif (Bottom Line Up Front — BLUF)
 
-*(Bagian ini akan menyajikan 3 kesimpulan paling krusial bagi Direksi setelah seluruh kueri SQL tervalidasi)*
+*(Bagian ini menyajikan 3 ringkasan kesimpulan paling krusial bagi Direksi berdasarkan temuan kueri SQL)*
 
 1. **Integritas Kas Escrow**:
    - Ditemukan kebocoran kas akibat sistem *auto-retry webhook* pencairan ganda (*Double Disbursement*) sebesar **Rp [TBD]** pada **[TBD]** pinjaman.
-   - Teridentifikasi dana mengendap tanpa pemilik (*Unmapped Repayments*) sebesar **Rp [TBD]** dari **[TBD]** mutasi setoran yang berpotensi memicu salah tagih oleh tim collection.
+   - Teridentifikasi dana mengendap tanpa pemilik (*Unmapped Repayments*) sebesar **Rp [TBD]** dari **[TBD]** mutasi setoran yang berisiko memicu salah tagih oleh tim collection.
 2. **Kepatuhan Batas Regulasi OJK (TWP90 vs Batas 5,00%)**:
-   - Rasio TWP90 agregat as-of 27 September 2026 berada pada posisi **[TBD]%** (TKB90: **[TBD]%**). Posisi ini [MEMATUHI / MELANGGAR] ambang batas pengawasan intensif OJK (5,00%).
-   - Pemburukan rasio didorong secara signifikan oleh produk **[PAYLATER / MODAL_KERJA]** dengan rasio macet sebesar **[TBD]%**.
+   - Rasio TWP90 agregat per penutupan buku 27 September 2026 berada pada posisi **[TBD]%** (TKB90: **[TBD]%**). Posisi ini [MEMATUHI / MELANGGAR] ambang batas pengawasan intensif OJK (5,00%).
+   - Pembedahan kualitas aset menunjukkan produk yang menjadi pemicu utama kenaikan rasio adalah **[PAYLATER / MODAL_KERJA]** dengan rasio macet sebesar **[TBD]%**.
 3. **Kualitas Seleksi & Kepatuhan Batas 100%**:
-   - Analisis kohort vintage membuktikan adanya fenomena *Adverse Selection* pada pencairan triwulan II 2026 (April–Juni 2026), di mana tingkat gagal bayar di usia dini (MOB 1–3) meningkat drastis dibanding kohort 2025.
-   - Seluruh tagihan bunga, fee, dan denda telah diaudit terhadap aturan plafon 100% SEOJK 19/2023, di mana sebanyak **[TBD]** pinjaman telah mencapai batas maksimum beban ekonomi.
+   - Analisis kohort vintage membuktikan bahwa kualitas seleksi kredit pada pencairan triwulan II 2026 mengalami **[PENURUNAN / STABIL / PERBAIKAN]** dengan default rate dini sebesar **[TBD]%**.
+   - Seluruh tagihan bunga, fee, dan denda telah diaudit terhadap aturan plafon 100% SEOJK 19/2023, di mana sebanyak **[TBD]** pinjaman melanggar dan **[TBD]** pinjaman menunggak lama telah mencapai batas maksimum beban ekonomi (*hard-capped*).
 
 ---
 
 ### 2. Matriks Indikator Kunci Portofolio (Executive KPI Dashboard)
 
-| Pilar Analisis | Indikator Metrik Kunci | Target / Ambang Regulasi | Nilai Temuan Analis | Status Kepatuhan |
+| Pilar Analisis | Indikator Metrik Kunci | Target / Ambang Acuan | Nilai Temuan Analis | Status Evaluasi |
 | :--- | :--- | :--- | :--- | :--- |
-| **A. Kas Escrow** | Dana Bocor Double Disbursement | Rp 0,00 | Rp [TBD] | [TBD] |
-| | Dana Gantung Unmapped Repayments | Rp 0,00 | Rp [TBD] | [TBD] |
-| **B. Kualitas Aset** | Rasio Makro TWP90 Portofolio | $\le 5,00\%$ | [TBD]% | [TBD] |
-| | Rasio Makro TKB90 Portofolio | $\ge 95,00\%$ | [TBD]% | [TBD] |
-| | Rasio TWP90 Paylater Konsumtif | Internal Benchmark | [TBD]% | [TBD] |
-| | Rasio TWP90 Modal Kerja Produktif | Internal Benchmark | [TBD]% | [TBD] |
-| **C. Segmentasi DPD** | Saldo Pokok di Ambang Default (DPD 61–90) | < 3,00% Portofolio | Rp [TBD] ([TBD]%) | [TBD] |
-| | Roll-Forward Rate ke Default (DPD 61–90 $\rightarrow$ 90+) | < 40,00% | [TBD]% | [TBD] |
-| **D. Vintage Curve** | Default Rate Kumulatif MOB 3 (Kohort Q2 2026) | < 2,00% | [TBD]% | [TBD] |
-| **E. Akuntansi & Pajak** | Pelanggaran Plafon 100% Pokok (SEOJK 19/2023) | 0 Kontrak | [TBD] Kontrak | [TBD] |
-| | Total Setoran Withholding Tax PPh 23/26 ke Kas Negara | Rekonsiliasi 100% | Rp [TBD] | [TBD] |
+| **A. Kas Escrow** | Dana Bocor Double Disbursement | Rp 0,00 *(Toleransi Nol Kustodian)* | Rp [TBD] | [TBD] |
+| | Dana Gantung Unmapped Repayments | Rp 0,00 *(Toleransi Nol Kustodian)* | Rp [TBD] | [TBD] |
+| **B. Kualitas Aset** | Rasio Makro TWP90 Portofolio | $\le 5,00\%$ *(Batas Maksimum OJK)* | [TBD]% | [TBD] |
+| | Rasio Makro TKB90 Portofolio | $\ge 95,00\%$ *(Batas Minimum OJK)* | [TBD]% | [TBD] |
+| | Rasio TWP90 Paylater Konsumtif | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
+| | Rasio TWP90 Modal Kerja Produktif | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
+| **C. Segmentasi DPD** | Saldo Pokok di Ambang Default (DPD 61–90) | [Benchmark Internal — Ditetapkan Analis] | Rp [TBD] ([TBD]%) | [TBD] |
+| | Roll-Forward Rate ke Default (DPD 61–90 $\rightarrow$ 90+) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
+| **D. Vintage Curve** | Default Rate Kumulatif MOB 3 (Kohort Q2 2026) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
+| **E. Akuntansi & Pajak** | Pelanggaran Plafon 100% Pokok (SEOJK 19/2023) | 0 Kontrak *(Batas Absolut Regulasi)* | [TBD] Kontrak | [TBD] |
+| | Total Setoran Withholding Tax PPh 23/26 ke Kas Negara | Rekonsiliasi 100% Kas Negara | Rp [TBD] | [TBD] |
 
 ---
 

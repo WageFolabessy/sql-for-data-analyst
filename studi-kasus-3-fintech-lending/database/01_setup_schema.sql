@@ -50,7 +50,7 @@ CREATE TABLE fact_loan (
     tenor_months                INTEGER NOT NULL,
     daily_interest_rate         NUMERIC(8,5) NOT NULL, -- Dikunci pada saat originasi
     daily_penalty_rate          NUMERIC(8,5) NOT NULL, -- Dikunci pada saat originasi
-    status                      VARCHAR(20) NOT NULL, -- 'ACTIVE', 'CLOSED', 'DEFAULTED', 'CANCELLED'
+    status                      VARCHAR(20) NOT NULL, -- 'ACTIVE', 'CLOSED', 'DEFAULTED', 'WRITTEN_OFF'
     outstanding_principal       NUMERIC(15,2) NOT NULL DEFAULT 0.00,
     is_capped_at_100_pct        BOOLEAN NOT NULL DEFAULT FALSE,
     is_restructured_evergreen   BOOLEAN NOT NULL DEFAULT FALSE
