@@ -36,7 +36,7 @@
 | | Rasio TWP90 Modal Kerja Produktif | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
 | **C. Segmentasi DPD** | Saldo Pokok di Ambang Default (DPD 61–90) | [Benchmark Internal — Ditetapkan Analis] | Rp [TBD] ([TBD]%) | [TBD] |
 | | Roll-Forward Rate ke Default (DPD 61–90 $\rightarrow$ 90+) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
-| **D. Vintage Curve** | Default Rate Kumulatif MOB 3 (Kohort Q2 2026) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
+| **D. Vintage Curve** | Default Rate Kumulatif MOB 4–5 (Kohort Q2 2026) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
 | **E. Akuntansi & Pajak** | Pelanggaran Plafon 100% Pokok (SEOJK 19/2023) | 0 Kontrak *(Batas Absolut Regulasi)* | [TBD] Kontrak | [TBD] |
 | | Total Setoran Withholding Tax PPh 23/26 ke Kas Negara | Rekonsiliasi 100% Kas Negara | Rp [TBD] | [TBD] |
 

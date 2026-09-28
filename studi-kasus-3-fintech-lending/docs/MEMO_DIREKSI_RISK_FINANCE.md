@@ -50,13 +50,13 @@ Saya tidak membutuhkan asumsi atau perkiraan kasar. Saya membutuhkan fakta berba
 * **Kasus 4.1 (Matriks Kinerja Bulanan Pinjaman: Month-on-Book / MOB 1 s/d MOB 6)**:
   Susun matriks kurva vintage kumulatif NPL (persentase pokok macet kumulatif terhadap nilai pencairan awal / *original disbursed principal*) per bulan pencairan (*cohort disbursement month*). Lacak perkembangannya dari MOB 1 hingga MOB 6 untuk memetakan kurva akumulasi risiko kredit.
 * **Kasus 4.2 (Deteksi Pemburukan Seleksi / Adverse Selection pada Vintage 2026)**:
-  Bandingkan kecepatan pemburukan kualitas kredit antara kohort tahun 2025 dengan kohort semester pertama tahun 2026 (terutama vintage Q2 2026: April, Mei, Juni). Apakah terjadi fenomena *Adverse Selection* di mana kohort baru mengalami gagal bayar di usia muda (MOB 1–3) jauh lebih cepat daripada kohort historis?
+  Bandingkan kecepatan pemburukan kualitas kredit antara kohort tahun 2025 dengan kohort semester pertama tahun 2026 (terutama vintage Q2 2026: April, Mei, Juni). Apakah terjadi fenomena *Adverse Selection* di mana kohort baru mengalami lonjakan gagal bayar di usia muda (MOB 4–5) jauh lebih tinggi dan lebih cepat daripada kohort historis?
 
 #### Bagian E: Akuntansi Pembayaran Waterfall, Plafon 100%, & Pajak Lender
 * **Kasus 5.1 (Audit Urutan Pelunasan Waterfall & Kepatuhan Plafon 100%)**:
   Audit apakah alokasi setoran borrower mematuhi hukum urutan prioritas: *Denda Keterlambatan $\rightarrow$ Biaya Layanan/Fee Platform $\rightarrow$ Bunga $\rightarrow$ Pokok Pinjaman*. Selain itu, buktikan apakah ada pinjaman macet di portofolio kita yang total akumulasi bunga + fee + dendanya melebihi **100% dari nilai pokok pinjaman** (pelanggaran plafon batas manfaat ekonomi OJK).
 * **Kasus 5.2 (Imbal Hasil Bersih Lender & Pemotongan Pajak PPh 23 / PMK 69/2022)**:
-  Hitung distribusi pendapatan bunga bersih kepada *Lender* setelah dipotong bagi hasil platform (*Platform Margin Share*) dan pemotongan kewajiban pajak penghasilan bunga (PPh Pasal 23 sebesar 15% untuk WPDN / PPh 26 sebesar 20% untuk WPLN). Berapa total kewajiban setor pajak withholding yang harus disetorkan Finance ke kas negara bulan ini?
+  Hitung distribusi pendapatan bunga bersih kepada *Lender* setelah dipotong bagi hasil platform (*Platform Margin Share*) dan pemotongan kewajiban pajak penghasilan bunga sesuai PMK No. 69/PMK.03/2022 (PPh Pasal 23 sebesar 15% untuk WPDN ber-NPWP, 30% untuk WPDN non-NPWP, serta PPh Pasal 26 sebesar 20% untuk WPLN). Berapa total kewajiban setor pajak withholding yang harus disetorkan Finance ke kas negara bulan ini?
 
 #### Bagian F: Laporan Eksekutif & Rencana Aksi Penyelamatan
 * **Kasus 6.1 (Executive Summary BLUF untuk Komite Risiko & OJK)**:

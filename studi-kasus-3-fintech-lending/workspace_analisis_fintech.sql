@@ -32,8 +32,8 @@
 
 -- --------------------------------------------------------------------
 -- [KASUS 1.2] Identifikasi Setoran Angsuran Tanpa VA Valid (Unmapped Repayments)
--- Mandat Bisnis: Temukan mutasi kas kredit yang masuk ke rekening escrow tanpa relasi pinjaman
---                (loan_id IS NULL), hitung total dana gantung, dan kelompokkan per bank.
+-- Mandat Bisnis: Temukan mutasi kas kredit setoran angsuran borrower yang gagal terpetakan ke pinjaman
+--                (loan_id IS NULL AND is_reconciled = FALSE), hitung total dana gantung, dan kelompokkan per bank.
 -- --------------------------------------------------------------------
 
 -- TULIS KUERI ANALISIS ANDA DI SINI:
@@ -131,7 +131,7 @@
 
 -- --------------------------------------------------------------------
 -- [KASUS 4.2] Deteksi Pemburukan Seleksi (Adverse Selection) pada Vintage 2026
--- Mandat Bisnis: Bandingkan akselerasi gagal bayar dini (MOB 1–3) antara vintage 2025 dengan
+-- Mandat Bisnis: Bandingkan akselerasi gagal bayar di usia muda (MOB 4–5) antara vintage 2025 dengan
 --                vintage Q2 2026 (Apr–Jun 2026) untuk membuktikan adanya degradasi kualitas underwriting.
 -- --------------------------------------------------------------------
 

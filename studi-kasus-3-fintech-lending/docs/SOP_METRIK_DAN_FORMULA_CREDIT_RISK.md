@@ -109,6 +109,7 @@ Analisis Vintage mengelompokkan pinjaman berdasarkan bulan pencairan (*originati
 *Peringatan Metodologis*:
 - **Denominator Wajib Tetap**: Pembagi kumulatif NPL adalah **Original Disbursed Principal di MOB 0** (nilai pokok awal saat dicairkan). Denominator tidak boleh menggunakan sisa saldo baki debet yang menyusut, karena akan memicu distorsi *survivorship bias*.
 - **Perlakuan Pinjaman WRITTEN_OFF**: Pinjaman yang telah dihapusbukukan (*WRITTEN_OFF*) **wajib tetap diperhitungkan sebagai gagal bayar kumulatif** sejak bulan terjadinya default. Penghapusbukuan adalah aksi akuntansi neraca, bukan pembatalan fakta gagal bayar historis.
+- **Kausalitas Waktu Gagal Bayar Bulanan**: Pada produk pinjaman bertenor bulanan (termin 30 hari), kriteria default resmi OJK ($\text{DPD} > 90$ hari) secara matematis baru dapat pertama kali terjadi pada **MOB 4** (hari ke-121). Pada MOB 1–3, hari keterlambatan maksimum berada pada rentang DPD 1–60 (pre-default), sehingga titik observasi lonjakan kegagalan kredit kohort baru berfokus pada **MOB 4 dan MOB 5**.
 
 ---
 
