@@ -54,7 +54,7 @@ Kualitas pendanaan diukur berdasarkan tingkat kelancaran pembayaran kembali oleh
 $$\text{TWP90} = \frac{\sum \text{Outstanding Principal Pinjaman Aktif dengan DPD } > 90 \text{ Hari}}{\sum \text{Outstanding Principal Seluruh Pinjaman Aktif}} \times 100\%$$
 
 - **Ambang Batas Pengawasan OJK**: $\text{TWP90} \le 5,00\%$.
-- Jika $\text{TWP90} > 5,00\%$, platform masuk dalam status pengawasan intensif OJK, wajib menyampaikan rencana aksi perbaikan (*Supervisory Action Plan*), serta terancam sanksi administratif bertahap (surat pembinaan hingga pembatasan kegiatan usaha) apabila tingkat wanprestasi tidak kunjung membaik.
+- Jika $\text{TWP90} > 5,00\%$, platform masuk dalam status pengawasan intensif OJK, wajib menyampaikan rencana aksi perbaikan (*Supervisory Action Plan*), serta terancam sanksi administratif berupa penerbitan surat pembinaan dari OJK apabila tingkat wanprestasi tidak kunjung membaik.
 
 #### B. Formula TKB90 (Tingkat Keberhasilan Bayar 90 Hari)
 $$\text{TKB90} = 100\% - \text{TWP90}$$
@@ -132,6 +132,7 @@ Ketika debitur menyetorkan dana pembayaran angsuran, sistem akuntansi NusaModal 
 *Aturan Sisa Setoran*:
 - Jika nominal pembayaran kurang dari total tagihan (*partial payment*), sisa pembayaran dialokasikan bertahap sesuai urutan prioritas di atas.
 - Jika pembayaran melebihi seluruh tagihan berjalan, kelebihan dana (*overpayment*) ditahan pada saldo deposit escrow debitur untuk dipotongkan pada angsuran berikutnya atau dikembalikan.
+- *(Catatan Ruang Lingkup Data)*: Pada dataset operasional NusaModal saat ini, diterapkan simplifikasi di mana tiap jadwal angsuran menerima maksimum satu transaksi pembayaran (lunas tepat jumlah atau cicilan parsial), sehingga kasus kelebihan bayar (*overpayment*) tidak terjadi di dalam data.
 
 ---
 

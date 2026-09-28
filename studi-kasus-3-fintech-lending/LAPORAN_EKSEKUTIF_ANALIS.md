@@ -19,7 +19,7 @@
    - Rasio TWP90 agregat per penutupan buku 27 September 2026 berada pada posisi **[TBD]%** (TKB90: **[TBD]%**). Posisi ini [MEMATUHI / MELANGGAR] ambang batas pengawasan intensif OJK (5,00%).
    - Pembedahan kualitas aset menunjukkan produk yang menjadi pemicu utama kenaikan rasio adalah **[PAYLATER / MODAL_KERJA]** dengan rasio macet sebesar **[TBD]%**.
 3. **Kualitas Seleksi & Kepatuhan Batas 100%**:
-   - Analisis kohort vintage membuktikan bahwa kualitas seleksi kredit pada pencairan triwulan II 2026 mengalami **[PENURUNAN / STABIL / PERBAIKAN]** dengan default rate dini sebesar **[TBD]%**.
+   - Analisis kohort vintage membuktikan bahwa kualitas seleksi kredit pada ekspansi pencairan tahun 2026 mengalami **[PENURUNAN / STABIL / PERBAIKAN]** dengan default rate dini sebesar **[TBD]%**.
    - Seluruh tagihan bunga, fee, dan denda telah diaudit terhadap aturan plafon 100% SEOJK 19/2023, di mana sebanyak **[TBD]** pinjaman melanggar dan **[TBD]** pinjaman menunggak lama telah mencapai batas maksimum beban ekonomi (*hard-capped*).
 
 ---
@@ -36,7 +36,7 @@
 | | Rasio TWP90 Modal Kerja Produktif | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
 | **C. Segmentasi DPD** | Saldo Pokok di Ambang Default (DPD 61–90) | [Benchmark Internal — Ditetapkan Analis] | Rp [TBD] ([TBD]%) | [TBD] |
 | | Roll-Forward Rate ke Default (DPD 61–90 $\rightarrow$ 90+) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
-| **D. Vintage Curve** | Default Rate Kumulatif MOB 4–5 (Kohort Q2 2026) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
+| **D. Vintage Curve** | Default Rate Kumulatif Usia Muda (MOB 4–5) | [Benchmark Internal — Ditetapkan Analis] | [TBD]% | [TBD] |
 | **E. Akuntansi & Pajak** | Pelanggaran Plafon 100% Pokok (SEOJK 19/2023) | 0 Kontrak *(Batas Absolut Regulasi)* | [TBD] Kontrak | [TBD] |
 | | Total Setoran Withholding Tax PPh 23/26 ke Kas Negara | Rekonsiliasi 100% Kas Negara | Rp [TBD] | [TBD] |
 

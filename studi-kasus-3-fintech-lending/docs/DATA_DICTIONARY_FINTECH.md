@@ -89,7 +89,7 @@ Menyimpan rincian jadwal jatuh tempo angsuran per termin pinjaman.
 | `principal_due` | `NUMERIC(15,2)` | Tagihan porsi pokok pinjaman. |
 | `interest_due` | `NUMERIC(15,2)` | Tagihan bunga flat (`disbursed_principal * daily_interest_rate * hari`). |
 | `platform_fee_due`| `NUMERIC(15,2)` | Tagihan biaya pemeliharaan layanan platform. |
-| `late_penalty_due`| `NUMERIC(15,2)` | Tagihan akumulasi denda keterlambatan (tunduk pada hard-cap 100%). |
+| `late_penalty_due`| `NUMERIC(15,2)` | Tagihan akumulasi denda keterlambatan termin, dihitung proporsional: `principal_due * daily_penalty_rate * DPD` (*asumsi operasional internal NusaModal*, tunduk pada batas hard-cap akumulasi manfaat ekonomi 100% dari `disbursed_principal`). |
 | `principal_paid`| `NUMERIC(15,2)` | Total porsi pokok yang telah terbayar. |
 | `interest_paid` | `NUMERIC(15,2)` | Total porsi bunga yang telah terbayar. |
 | `fee_paid` | `NUMERIC(15,2)` | Total porsi fee platform yang telah terbayar. |
