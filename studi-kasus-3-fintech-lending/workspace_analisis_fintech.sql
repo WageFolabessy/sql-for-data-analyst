@@ -131,8 +131,8 @@
 
 -- --------------------------------------------------------------------
 -- [KASUS 4.2] Deteksi Pemburukan Seleksi (Adverse Selection) pada Vintage 2026
--- Mandat Bisnis: Bandingkan akselerasi gagal bayar di usia muda (MOB 4–5) antara vintage 2025 dengan
---                vintage Q2 2026 (Apr–Jun 2026) untuk membuktikan adanya degradasi kualitas underwriting.
+-- Mandat Bisnis: Bandingkan akselerasi gagal bayar usia muda (MOB 4–5) antara vintage 2025 dengan
+--                vintage Q2 2026 (fokus kohort April & Mei 2026; Juni 2026 tersensor kanan di MOB 3) guna membuktikan degradasi underwriting.
 -- --------------------------------------------------------------------
 
 -- TULIS KUERI ANALISIS ANDA DI SINI:

@@ -25,10 +25,11 @@ Sesuai Bab VII SEOJK No. 19/SEOJK.06/2023, batas maksimum suku bunga (manfaat ek
    - Nilai `daily_interest_rate` dan `daily_penalty_rate` **dikunci secara permanen pada tanggal pencairan pinjaman (`disbursement_date`)** dan mengikat sepanjang masa pinjaman hingga lunas. Suku bunga kontrak tidak boleh berubah mengikuti tanggal kalender berjalan.
 2. **Tarif Denda Keterlambatan**:
    - Batas maksimum denda keterlambatan harian (`daily_penalty_rate`) mengikuti batas tarif harian yang persis sama dengan bunga per kategori produk dan tahun originasi.
-3. **Dasar Pengenaan Flat atas Nilai Pokok Kontrak**:
-   - Sesuai teks resmi regulasi, bunga harian dan denda harian dihitung **secara flat dari pokok pinjaman awal yang tercantum dalam perjanjian pendanaan (`disbursed_principal`)**, bukan dari baki debet / sisa pokok yang menyusut (*declining balance*).
+3. **Dasar Pengenaan Bunga & Denda Flat (SEOJK No. 19/2023)**:
+   - Sesuai teks resmi regulasi, bunga harian dihitung **secara flat dari pokok pinjaman awal yang tercantum dalam perjanjian pendanaan (`disbursed_principal`)**, bukan dari baki debet / sisa pokok yang menyusut (*declining balance*).
    $$\text{Bunga Harian (Rp)} = \text{disbursed\_principal} \times \text{daily\_interest\_rate}$$
-   $$\text{Denda Keterlambatan Harian (Rp)} = \text{disbursed\_principal} \times \text{daily\_penalty\_rate}$$
+   - **Ketentuan Denda Keterlambatan per Angsuran**: Pada pinjaman multi-termin, denda keterlambatan dihitung secara proporsional atas porsi pokok jatuh tempo termin terkait (`principal_due`) dikalikan hari keterlambatan (DPD), guna memastikan total akumulasi tarif harian denda tidak melampaui plafon batas harian SEOJK No. 19/2023:
+   $$\text{Denda Keterlambatan Termin (Rp)} = \text{principal\_due} \times \text{daily\_penalty\_rate} \times \text{DPD}$$
 
 ---
 
@@ -52,14 +53,15 @@ Kualitas pendanaan diukur berdasarkan tingkat kelancaran pembayaran kembali oleh
 $$\text{TWP90} = \frac{\sum \text{Outstanding Principal Pinjaman Aktif dengan DPD } > 90 \text{ Hari}}{\sum \text{Outstanding Principal Seluruh Pinjaman Aktif}} \times 100\%$$
 
 - **Ambang Batas Pengawasan OJK**: $\text{TWP90} \le 5,00\%$.
-- Jika $\text{TWP90} > 5,00\%$, platform masuk dalam pengawasan intensif OJK, wajib menyampaikan rencana aksi perbaikan, dan terancam pembekuan izin penyaluran pinjaman baru.
+- Jika $\text{TWP90} > 5,00\%$, platform masuk dalam status pengawasan intensif OJK, wajib menyampaikan rencana aksi perbaikan (*Supervisory Action Plan*), serta terancam sanksi administratif bertahap (surat pembinaan hingga pembatasan kegiatan usaha) apabila tingkat wanprestasi tidak kunjung membaik.
 
 #### B. Formula TKB90 (Tingkat Keberhasilan Bayar 90 Hari)
 $$\text{TKB90} = 100\% - \text{TWP90}$$
 - **Ambang Batas Minimum**: $\text{TKB90} \ge 95,00\%$. TKB90 wajib ditampilkan secara mencolok pada laman beranda situs web dan aplikasi platform NusaModal.
 
-*Catatan Definisi Denominator*:
-- Denominator mencakup seluruh pinjaman berstatus aktif pada tanggal evaluasi yang memiliki sisa baki debet pokok (`outstanding_principal > 0`). Pinjaman yang sudah lunas (*CLOSED*) atau sudah dihapusbukukan (*WRITTEN_OFF*) tidak masuk dalam denominator baki debet aktif.
+*Catatan Definisi Denominator & Kebijakan Hapus Buku*:
+- **Denominator Baki Debet Aktif**: Mencakup seluruh pinjaman berstatus aktif pada tanggal evaluasi yang memiliki sisa baki debet pokok (`outstanding_principal > 0`). Pinjaman yang sudah lunas (*CLOSED*) atau sudah dihapusbukukan (*WRITTEN_OFF*) tidak masuk dalam denominator baki debet aktif.
+- **Hapus Buku oleh Pemberi Dana (Lender Write-Off)**: Sebagai platform P2P (*off-balance sheet*), NusaModal tidak memiliki neraca pinjaman sendiri. Hapus buku pinjaman macet dilakukan oleh atau atas persetujuan Lender/kebijakan mitigasi kredit (pada studi kasus NusaModal, diterapkan asumsi operasional threshold macet kronis $>270$ hari). Sesuai arahan pengawas OJK, pinjaman yang telah dihapusbukukan oleh lender dikeluarkan dari perhitungan baki debet aktif TWP90/TKB90 untuk memulihkan rasio kesehatan pendanaan.
 
 ---
 
@@ -91,6 +93,8 @@ Analisis Roll-Rate mengukur probabilitas pergerakan saldo pinjaman antar-bucket 
 2. **Cure Rate (Penyembuhan / Pelunasan)**:
    Persentase saldo dari bucket tertunggak yang berhasil disembuhkan kembali ke status Current atau lunas (`CLOSED`):
    $$\text{Cure Rate}_{(B_i \rightarrow \text{Current/Closed})} = \frac{\text{Saldo yang kembali ke Current / Lunas di Bulan } M}{\text{Total Saldo Awal di Bucket } i \text{ pada Bulan } M-1} \times 100\%$$
+3. **Perlakuan Hapus Buku (Lender Write-Off) pada Matriks Transisi**:
+   - Pinjaman yang telah menunggak kronis melewati batas toleransi penagihan (>270 hari) bergeser statusnya dari keranjang gagal bayar (*DPD > 90*) menjadi *WRITTEN_OFF* (dihapusbukukan oleh lender atas persetujuan mitigasi portofolio). Pinjaman ini keluar dari baki debet aktif pada bulan terjadinya eksekusi hapus buku.
 
 ---
 
@@ -108,8 +112,9 @@ Analisis Vintage mengelompokkan pinjaman berdasarkan bulan pencairan (*originati
 
 *Peringatan Metodologis*:
 - **Denominator Wajib Tetap**: Pembagi kumulatif NPL adalah **Original Disbursed Principal di MOB 0** (nilai pokok awal saat dicairkan). Denominator tidak boleh menggunakan sisa saldo baki debet yang menyusut, karena akan memicu distorsi *survivorship bias*.
-- **Perlakuan Pinjaman WRITTEN_OFF**: Pinjaman yang telah dihapusbukukan (*WRITTEN_OFF*) **wajib tetap diperhitungkan sebagai gagal bayar kumulatif** sejak bulan terjadinya default. Penghapusbukuan adalah aksi akuntansi neraca, bukan pembatalan fakta gagal bayar historis.
+- **Perlakuan Pinjaman WRITTEN_OFF**: Pinjaman yang telah dihapusbukukan oleh pemberi dana (*WRITTEN_OFF*) **wajib tetap diperhitungkan sebagai gagal bayar kumulatif** sejak bulan terjadinya default. Penghapusbukuan adalah aksi akuntansi pembersihan portofolio lender, bukan pembatalan fakta gagal bayar historis debitur.
 - **Kausalitas Waktu Gagal Bayar Bulanan**: Pada produk pinjaman bertenor bulanan (termin 30 hari), kriteria default resmi OJK ($\text{DPD} > 90$ hari) secara matematis baru dapat pertama kali terjadi pada **MOB 4** (hari ke-121). Pada MOB 1–3, hari keterlambatan maksimum berada pada rentang DPD 1–60 (pre-default), sehingga titik observasi lonjakan kegagalan kredit kohort baru berfokus pada **MOB 4 dan MOB 5**.
+- **Fenomena Right-Censoring pada Kohort Baru**: Pada tanggal cutoff 27 September 2026, kohort pencairan Juni 2026 baru mencapai usia MOB 3 (DPD maksimum 88 hari), sehingga belum dapat diobservasi pada MOB 4–5 (*right-censored*). Analisis komparatif lonjakan default usia muda Q2 2026 bertumpu pada kohort April 2026 (MOB 5) dan Mei 2026 (MOB 4).
 
 ---
 
@@ -130,7 +135,7 @@ Ketika debitur menyetorkan dana pembayaran angsuran, sistem akuntansi NusaModal 
 
 ### 8. Perpajakan Finansial P2P Lending (PMK No. 69/PMK.03/2022)
 
-Sesuai PMK No. 69/PMK.03/2022 Pasal 7 ayat (2), NusaModal ditunjuk sebagai pemotong pajak penghasilan atas imbal hasil (bunga) yang diterima atau diperoleh Pemberi Dana (*Lender*):
+Sesuai ketentuan PMK No. 69/PMK.03/2022, NusaModal ditunjuk sebagai pemotong pajak penghasilan atas imbal hasil (bunga) yang diterima atau diperoleh Pemberi Dana (*Lender*):
 
 1. **Dasar Pengenaan Pajak (DPP) Bunga Bruto**:
    - Pemotongan PPh Pasal 23 dan PPh Pasal 26 dilakukan secara langsung **dari jumlah bruto bunga (*Gross Interest*)** yang dibayarkan oleh penerima pinjaman, tanpa dikurangi biaya operasional maupun bagi hasil platform.
