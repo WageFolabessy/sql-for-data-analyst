@@ -16,7 +16,7 @@ SELECT * FROM dim_lender;
 SELECT * FROM fact_loan;
 SELECT * FROM fact_repayment_schedule;
 SELECT * FROM fact_repayment_payment;
-SELECT * FROM fact_escrow_mutation ORDER BY loan_id;
+SELECT * FROM fact_escrow_mutation;
 
 -- ====================================================================
 -- BAGIAN A: REKONSILIASI KAS ESCROW & DATA HYGIENE
@@ -29,48 +29,54 @@ SELECT * FROM fact_escrow_mutation ORDER BY loan_id;
 -- TULIS KUERI ANALISIS ANDA DI SINI:
 
 WITH detail_mutasi AS (
-SELECT
-	fem.mutation_id,
-	fem.loan_id,
-	fem.mutation_timestamp,
-	fem.mutation_type,
-	fem.amount,
-	-- Menghitung berapa kali loan_id muncul khusus untuk tipe DEBIT
-        COUNT(*) OVER(PARTITION BY fem.loan_id) AS jumlah_loan
+    SELECT
+        fem.mutation_id,
+        fem.loan_id,
+        fem.mutation_timestamp,
+        fem.mutation_type,
+        fem.amount,
+        -- Menghitung frekuensi mutasi DEBIT per loan_id
+        COUNT(*) OVER (PARTITION BY fem.loan_id) AS jumlah_loan
     FROM fact_escrow_mutation fem
     WHERE fem.mutation_type = 'DEBIT'
 ),
 dana_bocor AS (
-	SELECT DISTINCT ON (dl.loan_id)
-	    dl.mutation_id,
-	    dl.loan_id,
-	    fl.borrower_id,
-	    dl.mutation_timestamp,
-	    fl.disbursement_date,
-	    dl.mutation_type,
-	    dl.amount,
-	    fl.disbursed_principal
-	FROM detail_mutasi dl
-	INNER JOIN fact_loan fl
-		ON dl.loan_id = fl.loan_id
-	WHERE dl.jumlah_loan > 1
-	ORDER BY loan_id, dl.mutation_timestamp DESC
+    SELECT DISTINCT ON (dl.loan_id)
+        dl.mutation_id,
+        dl.loan_id,
+        fl.borrower_id,
+        dl.mutation_timestamp,
+        fl.disbursement_date,
+        dl.mutation_type,
+        dl.amount,
+        fl.disbursed_principal
+    FROM detail_mutasi dl
+    INNER JOIN fact_loan fl
+        ON dl.loan_id = fl.loan_id
+    WHERE dl.jumlah_loan > 1
+    ORDER BY dl.loan_id, dl.mutation_timestamp DESC
 )
 SELECT
-	COUNT(loan_id) AS total_kebocoran,
-	SUM(amount) AS total_dana_yang_bocor
+    COUNT(loan_id) AS total_kebocoran,
+    SUM(amount)    AS total_dana_yang_bocor
 FROM dana_bocor;
 
 
 -- [DISIPLIN ANALIS: KUERI SANITY-CHECK KE TABEL MENTAH]
 
-SELECT COUNT(*), SUM(amount)
+-- Sanity Check 1: Verifikasi mutasi DEBIT yang ditolak/belum terekonsiliasi oleh sistem core
+SELECT 
+    COUNT(*)    AS total_mutasi_debit_unreconciled, 
+    SUM(amount) AS total_nominal_bocor
 FROM fact_escrow_mutation
-WHERE mutation_type = 'DEBIT' AND is_reconciled = FALSE;
+WHERE mutation_type = 'DEBIT' 
+  AND is_reconciled = FALSE;
 
+-- Sanity Check 2: Selisih antara total mutasi pencairan kas escrow dengan total pokok kontrak
 SELECT 
     (SELECT SUM(amount) FROM fact_escrow_mutation WHERE mutation_type = 'DEBIT' AND description LIKE '%PENCAIRAN%')
     - (SELECT SUM(disbursed_principal) FROM fact_loan) AS selisih_kebocoran_kas;
+
 
 -- --------------------------------------------------------------------
 -- [KASUS 1.2] Identifikasi Setoran Angsuran Tanpa VA Valid (Unmapped Repayments)
@@ -78,12 +84,30 @@ SELECT
 
 -- TULIS KUERI ANALISIS ANDA DI SINI:
 
+SELECT
+    COALESCE(bank_name, 'TOTAL_KESELURUHAN') AS bank_penampung,
+    COUNT(*)                                 AS total_transaksi_unmapped,
+    SUM(amount)                              AS total_dana_gantung
+FROM fact_escrow_mutation
+WHERE mutation_type = 'CREDIT' 
+  AND is_reconciled = FALSE 
+  AND loan_id IS NULL
+GROUP BY ROLLUP(bank_name);
 
 
 -- [DISIPLIN ANALIS: KUERI SANITY-CHECK KE TABEL MENTAH]
 
+-- Sanity Check 1: Buktikan bahwa semua kredit tereconciled cocok 100% dengan total pembayaran payment ledger
+SELECT 
+    (SELECT SUM(amount) FROM fact_escrow_mutation WHERE mutation_type = 'CREDIT' AND is_reconciled = TRUE AND description LIKE 'SETORAN ANGSURAN%') AS total_escrow_credit_reconciled,
+    (SELECT SUM(amount_paid) FROM fact_repayment_payment) AS total_payment_ledger_paid;
 
-
+-- Sanity Check 2: Pastikan tidak ada satupun mutasi unmapped yang memiliki nomor pinjaman
+SELECT COUNT(*) AS anomali_unmapped_ber_loan_id
+FROM fact_escrow_mutation
+WHERE mutation_type = 'CREDIT' 
+  AND is_reconciled = FALSE 
+  AND loan_id IS NOT NULL;
 
 -- ====================================================================
 -- BAGIAN B: KUALITAS ASET & KEPATUHAN REGULASI BATAS OJK
