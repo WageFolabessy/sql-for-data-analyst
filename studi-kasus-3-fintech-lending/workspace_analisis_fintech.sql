@@ -11,6 +11,12 @@
 --            docs/DATA_DICTIONARY_FINTECH.md
 -- ====================================================================
 
+SELECT * FROM dim_borrower;
+SELECT * FROM dim_lender;
+SELECT * FROM fact_loan;
+SELECT * FROM fact_repayment_schedule;
+SELECT * FROM fact_repayment_payment;
+SELECT * FROM fact_escrow_mutation ORDER BY loan_id;
 
 -- ====================================================================
 -- BAGIAN A: REKONSILIASI KAS ESCROW & DATA HYGIENE
@@ -22,11 +28,49 @@
 
 -- TULIS KUERI ANALISIS ANDA DI SINI:
 
+WITH detail_mutasi AS (
+SELECT
+	fem.mutation_id,
+	fem.loan_id,
+	fem.mutation_timestamp,
+	fem.mutation_type,
+	fem.amount,
+	-- Menghitung berapa kali loan_id muncul khusus untuk tipe DEBIT
+        COUNT(*) OVER(PARTITION BY fem.loan_id) AS jumlah_loan
+    FROM fact_escrow_mutation fem
+    WHERE fem.mutation_type = 'DEBIT'
+),
+dana_bocor AS (
+	SELECT DISTINCT ON (dl.loan_id)
+	    dl.mutation_id,
+	    dl.loan_id,
+	    fl.borrower_id,
+	    dl.mutation_timestamp,
+	    fl.disbursement_date,
+	    dl.mutation_type,
+	    dl.amount,
+	    fl.disbursed_principal
+	FROM detail_mutasi dl
+	INNER JOIN fact_loan fl
+		ON dl.loan_id = fl.loan_id
+	WHERE dl.jumlah_loan > 1
+	ORDER BY loan_id, dl.mutation_timestamp DESC
+)
+SELECT
+	COUNT(loan_id) AS total_kebocoran,
+	SUM(amount) AS total_dana_yang_bocor
+FROM dana_bocor;
 
 
 -- [DISIPLIN ANALIS: KUERI SANITY-CHECK KE TABEL MENTAH]
 
+SELECT COUNT(*), SUM(amount)
+FROM fact_escrow_mutation
+WHERE mutation_type = 'DEBIT' AND is_reconciled = FALSE;
 
+SELECT 
+    (SELECT SUM(amount) FROM fact_escrow_mutation WHERE mutation_type = 'DEBIT' AND description LIKE '%PENCAIRAN%')
+    - (SELECT SUM(disbursed_principal) FROM fact_loan) AS selisih_kebocoran_kas;
 
 -- --------------------------------------------------------------------
 -- [KASUS 1.2] Identifikasi Setoran Angsuran Tanpa VA Valid (Unmapped Repayments)
