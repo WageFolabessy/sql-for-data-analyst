@@ -119,10 +119,68 @@ WHERE mutation_type = 'CREDIT'
 
 -- TULIS KUERI ANALISIS ANDA DI SINI:
 
+WITH rekap_portofolio AS (
+    SELECT
+        SUM(outstanding_principal) AS total_baki_debet_aktif,
+        SUM(outstanding_principal) FILTER (WHERE status = 'DEFAULTED') AS total_baki_debet_macet
+    FROM fact_loan
+    WHERE status IN ('ACTIVE', 'DEFAULTED')
+)
+SELECT
+    ROUND(100.0 * total_baki_debet_macet / total_baki_debet_aktif, 2) AS twp90,
+    ROUND(100.0 - (100.0 * total_baki_debet_macet / total_baki_debet_aktif), 2) AS tkb90
+FROM rekap_portofolio;
 
+WITH pinjaman_dpd AS (
+    -- Agregasi per pinjaman untuk mencari DPD terlama dari angsuran yang belum lunas
+    SELECT
+        fl.loan_id,
+        fl.outstanding_principal,
+        MAX(CASE WHEN frs.status != 'PAID' THEN ('2026-09-27'::DATE - frs.due_date) ELSE 0 END) AS max_dpd
+    FROM fact_loan fl
+    INNER JOIN fact_repayment_schedule frs 
+        ON fl.loan_id = frs.loan_id
+    WHERE fl.status IN ('ACTIVE', 'DEFAULTED')
+    GROUP BY fl.loan_id, fl.outstanding_principal
+)
+SELECT
+    ROUND(
+        100.0 * SUM(outstanding_principal) FILTER (WHERE max_dpd > 90) / 
+        SUM(outstanding_principal), 
+        2
+    ) AS twp90,
+    ROUND(
+        100.0 - (100.0 * SUM(outstanding_principal) FILTER (WHERE max_dpd > 90) / SUM(outstanding_principal)), 
+        2
+    ) AS tkb90
+FROM pinjaman_dpd;
 
 -- [DISIPLIN ANALIS: KUERI SANITY-CHECK KE TABEL MENTAH]
 
+-- Sanity Check 1: Verifikasi bahwa seluruh pinjaman berstatus CLOSED dan WRITTEN_OFF memiliki sisa baki debet nol (0.00)
+SELECT 
+    status, 
+    COUNT(*) AS total_pinjaman, 
+    SUM(outstanding_principal) AS sisa_baki_debet_tidak_nol
+FROM fact_loan
+WHERE status IN ('CLOSED', 'WRITTEN_OFF')
+GROUP BY status;
+
+-- Sanity Check 2: Audit konsistensi status pinjaman vs jadwal angsuran faktual (0 anomali batas DPD 90 hari)
+WITH pinjaman_max_dpd AS (
+    SELECT 
+        fl.loan_id,
+        fl.status,
+        MAX(CASE WHEN frs.status != 'PAID' THEN ('2026-09-27'::DATE - frs.due_date) ELSE 0 END) AS max_dpd
+    FROM fact_loan fl
+    INNER JOIN fact_repayment_schedule frs ON fl.loan_id = frs.loan_id
+    WHERE fl.status IN ('ACTIVE', 'DEFAULTED')
+    GROUP BY fl.loan_id, fl.status
+)
+SELECT 
+    COUNT(*) FILTER (WHERE status = 'ACTIVE' AND max_dpd > 90) AS anomali_active_dpd_lewat_90,
+    COUNT(*) FILTER (WHERE status = 'DEFAULTED' AND max_dpd <= 90) AS anomali_defaulted_dpd_kurang_91
+FROM pinjaman_max_dpd;
 
 
 -- --------------------------------------------------------------------
@@ -131,12 +189,63 @@ WHERE mutation_type = 'CREDIT'
 
 -- TULIS KUERI ANALISIS ANDA DI SINI:
 
+-- Opsi 1: Rekap Dasar Sesuai Standar OJK (Baki Debet Aktif, Macet, TWP90, TKB90)
+WITH rekap_portofolio AS (
+    SELECT
+        product_type AS jenis_produk,
+        SUM(outstanding_principal) AS total_baki_debet_aktif,
+        SUM(outstanding_principal) FILTER (WHERE status = 'DEFAULTED') AS total_baki_debet_macet
+    FROM fact_loan
+    WHERE status IN ('ACTIVE', 'DEFAULTED')
+    GROUP BY product_type
+)
+SELECT
+    jenis_produk,
+    total_baki_debet_aktif,
+    total_baki_debet_macet,
+    ROUND(100.0 * total_baki_debet_macet / total_baki_debet_aktif, 2) AS twp90,
+    ROUND(100.0 - (100.0 * total_baki_debet_macet / total_baki_debet_aktif), 2) AS tkb90
+FROM rekap_portofolio;
+
+-- Opsi 2 Dilengkapi Pangsa Portofolio (% Share Exposure & % Share NPL)
+WITH rekap_portofolio AS (
+    SELECT
+        product_type AS jenis_produk,
+        SUM(outstanding_principal) AS total_baki_debet_aktif,
+        SUM(outstanding_principal) FILTER (WHERE status = 'DEFAULTED') AS total_baki_debet_macet
+    FROM fact_loan
+    WHERE status IN ('ACTIVE', 'DEFAULTED')
+    GROUP BY product_type
+)
+SELECT
+    jenis_produk,
+    total_baki_debet_aktif,
+    ROUND(100.0 * total_baki_debet_aktif / SUM(total_baki_debet_aktif) OVER(), 2) AS porsi_eksposur_pct,
+    total_baki_debet_macet,
+    ROUND(100.0 * total_baki_debet_macet / SUM(total_baki_debet_macet) OVER(), 2) AS porsi_npl_nominal_pct,
+    ROUND(100.0 * total_baki_debet_macet / total_baki_debet_aktif, 2) AS twp90,
+    ROUND(100.0 - (100.0 * total_baki_debet_macet / total_baki_debet_aktif), 2) AS tkb90
+FROM rekap_portofolio;
 
 
 -- [DISIPLIN ANALIS: KUERI SANITY-CHECK KE TABEL MENTAH]
 
+-- Sanity Check 1: Rekonsiliasi matematika portofolio segmen terhadap total portofolio makro Kasus 2.1 (selisih wajib 0.00)
+SELECT 
+    (SELECT SUM(outstanding_principal) FROM fact_loan WHERE status IN ('ACTIVE', 'DEFAULTED')) 
+    - SUM(outstanding_principal) AS selisih_rekonsiliasi_aktif,
+    (SELECT SUM(outstanding_principal) FROM fact_loan WHERE status = 'DEFAULTED') 
+    - SUM(outstanding_principal) FILTER (WHERE status = 'DEFAULTED') AS selisih_rekonsiliasi_macet
+FROM fact_loan
+WHERE status IN ('ACTIVE', 'DEFAULTED')
+  AND product_type IN ('PAYLATER', 'MODAL_KERJA');
 
-
+-- Sanity Check 2: Pastikan tidak ada pinjaman aktif tanpa produk (NULL) atau tipe produk asing di luar segmentasi
+SELECT 
+    COUNT(*) FILTER (WHERE product_type IS NULL) AS pinjaman_tanpa_produk,
+    COUNT(*) FILTER (WHERE product_type NOT IN ('PAYLATER', 'MODAL_KERJA')) AS produk_tidak_dikenal
+FROM fact_loan
+WHERE status IN ('ACTIVE', 'DEFAULTED');
 
 -- ====================================================================
 -- BAGIAN C: SEGMENTASI KETERLAMBATAN DPD & MATRIKS TRANSISI RISIKO
